@@ -1,20 +1,22 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../image/image-item.dart';
+import '../image-picker/image-picker.dart';
 
-class DynamicLayoutItem extends StatefulWidget {
-  DynamicLayoutItem({Key key, this.title}) : super(key: key);
+class ImageItem extends StatefulWidget {
+  ImageItem({Key key, this.title}) : super(key: key);
 
   final String title;
   @override
-  _DynamicLayoutItemState createState() => _DynamicLayoutItemState();
+  _ImageItemState createState() => _ImageItemState();
 }
 
-class _DynamicLayoutItemState extends State<DynamicLayoutItem>
+class _ImageItemState extends State<ImageItem>
     with SingleTickerProviderStateMixin {
-  CurvedAnimation curve;
-
+  Image image; //image to load
+  //List<Sticker> stickers;
+  //List<SpeechBubble> speech bubbles;
   @override
   void initState() {
     super.initState();
@@ -27,7 +29,15 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
         width: MediaQuery.of(context).size.width,
         margin: EdgeInsets.all(10),
         color: Colors.black,
-        child: InkWell(child: new ImageItem()));
+        child: InkWell(
+            child: Container(
+              child: Text('Image is going to be here'),
+              //insert image here//
+            ),
+            onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ImageItemPicker()),
+                )));
   }
 
   askForSize() {

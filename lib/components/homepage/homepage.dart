@@ -171,7 +171,7 @@ class _NavigationScreenState extends State<NavigationScreen>
       height: double.infinity,
       color: Colors.white,
       child: Center(
-        child: DynamicLayout(),
+        child: DynamicLayoutItem(),
       ),
     );
   }
