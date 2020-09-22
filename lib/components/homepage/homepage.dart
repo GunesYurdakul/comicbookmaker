@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import './../dynamic-layout/dynamic-layout-item.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -171,16 +171,7 @@ class _NavigationScreenState extends State<NavigationScreen>
       height: double.infinity,
       color: Colors.white,
       child: Center(
-        child: CircularRevealAnimation(
-          animation: animation,
-          centerOffset: Offset(80, 80),
-          maxRadius: MediaQuery.of(context).size.longestSide * 1.1,
-          child: Icon(
-            widget.iconData,
-            color: HexColor('#FFA400'),
-            size: 160,
-          ),
-        ),
+        child: DynamicLayout(),
       ),
     );
   }
