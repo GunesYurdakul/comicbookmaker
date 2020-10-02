@@ -1,8 +1,7 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../image-picker/image-picker.dart';
+import '../image-editor/image_editor_pro.dart';
 
 class ImageItem extends StatefulWidget {
   ImageItem({Key key, this.title}) : super(key: key);
@@ -14,11 +13,14 @@ class ImageItem extends StatefulWidget {
 
 class _ImageItemState extends State<ImageItem>
     with SingleTickerProviderStateMixin {
-  Image image; //image to load
+  Image _image; //image to load
+  String _key;
+
   //List<Sticker> stickers;
   //List<SpeechBubble> speech bubbles;
   @override
   void initState() {
+    _key = "hh";
     super.initState();
   }
 
@@ -27,17 +29,26 @@ class _ImageItemState extends State<ImageItem>
     return Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.all(10),
         color: Colors.black,
         child: InkWell(
-            child: Container(
-              child: Text('Image is going to be here'),
-              //insert image here//
-            ),
-            onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ImageItemPicker()),
-                )));
+            child: _image != null
+                ? FittedBox(
+                    child: _image,
+                    fit: BoxFit.fitHeight,
+                  )
+                : Container(),
+            onTap: () async {
+              _image = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageEditorPro(
+                    appBarColor: Colors.white,
+                    bottomBarColor: Colors.blue,
+                  ),
+                ),
+              );
+              setState(() {});
+            }));
   }
 
   askForSize() {

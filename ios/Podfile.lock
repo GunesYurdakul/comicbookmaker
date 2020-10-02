@@ -2,6 +2,8 @@ PODS:
   - camera (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - image_editor (0.0.1):
+    - Flutter
   - image_editor_pro (0.0.1):
     - Flutter
   - image_gallery_saver (1.5.0):
@@ -18,6 +20,7 @@ PODS:
 DEPENDENCIES:
   - camera (from `.symlinks/plugins/camera/ios`)
   - Flutter (from `Flutter`)
+  - image_editor (from `.symlinks/plugins/image_editor/ios`)
   - image_editor_pro (from `.symlinks/plugins/image_editor_pro/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
@@ -30,6 +33,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/camera/ios"
   Flutter:
     :path: Flutter
+  image_editor:
+    :path: ".symlinks/plugins/image_editor/ios"
   image_editor_pro:
     :path: ".symlinks/plugins/image_editor_pro/ios"
   image_gallery_saver:
@@ -46,6 +51,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  image_editor: c1d038630eedea60d2dee9c14f36aa66c7f9cfab
   image_editor_pro: f3221a9be3d4833deaaa918f7f78bd1503d2a78c
   image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
