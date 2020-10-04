@@ -7,13 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_editor_pro/modules/all_emojies.dart';
-import 'package:image_editor_pro/modules/bottombar_container.dart';
-import 'package:image_editor_pro/modules/colors_picker.dart';
-import 'package:image_editor_pro/modules/emoji.dart';
-import 'package:image_editor_pro/modules/text.dart';
-import 'package:image_editor_pro/modules/textview.dart';
+import './modules/bottombar_container.dart';
+import './modules/colors_picker.dart';
+import './modules/sticker.dart';
+import './modules/text.dart';
 import 'package:path_provider/path_provider.dart';
+import './modules/stickers.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
@@ -239,58 +238,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       ),
                       Stack(
                         children: multiwidget.asMap().entries.map((f) {
-                          return type[f.key] == 1
-                              ? EmojiView(
-                                  left: offsets[f.key].dx,
-                                  top: offsets[f.key].dy,
-                                  ontap: () {
-                                    scaf.currentState
-                                        .showBottomSheet((context) {
-                                      return Sliders(
-                                        size: f.key,
-                                        sizevalue: fontsize[f.key].toDouble(),
-                                      );
-                                    });
-                                  },
-                                  onpanupdate: (details) {
-                                    setState(() {
-                                      offsets[f.key] = Offset(
-                                          offsets[f.key].dx + details.delta.dx,
-                                          offsets[f.key].dy + details.delta.dy);
-                                    });
-                                  },
-                                  value: f.value.toString(),
-                                  fontsize: fontsize[f.key].toDouble(),
-                                  align: TextAlign.center,
-                                )
-                              : type[f.key] == 2
-                                  ? TextView(
-                                      left: offsets[f.key].dx,
-                                      top: offsets[f.key].dy,
-                                      ontap: () {
-                                        scaf.currentState
-                                            .showBottomSheet((context) {
-                                          return Sliders(
-                                            size: f.key,
-                                            sizevalue:
-                                                fontsize[f.key].toDouble(),
-                                          );
-                                        });
-                                      },
-                                      onpanupdate: (details) {
-                                        setState(() {
-                                          offsets[f.key] = Offset(
-                                              offsets[f.key].dx +
-                                                  details.delta.dx,
-                                              offsets[f.key].dy +
-                                                  details.delta.dy);
-                                        });
-                                      },
-                                      value: f.value.toString(),
-                                      fontsize: fontsize[f.key].toDouble(),
-                                      align: TextAlign.center,
-                                    )
-                                  : new Container();
+                          return StickerView(
+                            value: f.value,
+                          );
                         }).toList(),
                       )
                     ],
@@ -386,10 +336,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         Future getemojis = showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {
-                              return Emojies();
+                              return Stickers();
                             });
                         getemojis.then((value) {
                           if (value != null) {
+                            print(value);
                             type.add(1);
                             fontsize.add(20);
                             offsets.add(Offset.zero);

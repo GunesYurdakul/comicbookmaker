@@ -6,8 +6,7 @@ class EmojiView extends StatefulWidget {
   final Function ontap;
   final Function(DragUpdateDetails) onpanupdate;
   final double fontsize;
-  final String value;
-  final TextAlign align;
+  final Image value;
   const EmojiView(
       {Key key,
       this.left,
@@ -15,8 +14,7 @@ class EmojiView extends StatefulWidget {
       this.ontap,
       this.onpanupdate,
       this.fontsize,
-      this.value,
-      this.align})
+      this.value})
       : super(key: key);
   @override
   _EmojiViewState createState() => _EmojiViewState();
@@ -29,13 +27,10 @@ class _EmojiViewState extends State<EmojiView> {
       left: widget.left,
       top: widget.top,
       child: GestureDetector(
-          onTap: widget.ontap,
-          onPanUpdate: widget.onpanupdate,
-          child: Text(widget.value,
-              textAlign: widget.align,
-              style: TextStyle(
-                fontSize: widget.fontsize,
-              ))),
+        onTap: widget.ontap,
+        onPanUpdate: widget.onpanupdate,
+        child: widget.value,
+      ),
     );
   }
 }
