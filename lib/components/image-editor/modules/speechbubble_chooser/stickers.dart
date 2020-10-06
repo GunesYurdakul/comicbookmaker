@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
-class Stickers extends StatefulWidget {
+class SpeechBubbles extends StatefulWidget {
   @override
-  _StickersState createState() => _StickersState();
+  _SpeechBubblesState createState() => _SpeechBubblesState();
 }
 
-class _StickersState extends State<Stickers> {
-  Future<List<String>> stickers;
+class _SpeechBubblesState extends State<SpeechBubbles> {
+  Future<List<String>> SpeechBubbles;
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<List<String>>(
@@ -27,7 +27,7 @@ class _StickersState extends State<Stickers> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          new Text("Select Emoji"),
+                          new Text("Select Sticker"),
                         ],
                       ),
                     ),

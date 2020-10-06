@@ -42,9 +42,10 @@ class _ImageItemState extends State<ImageItem>
                 context,
                 MaterialPageRoute(
                   builder: (context) => ImageEditorPro(
-                    appBarColor: Colors.white,
-                    bottomBarColor: Colors.blue,
-                  ),
+                      appBarColor: Colors.transparent,
+                      bottomBarColor: Colors.blue,
+                      height: height,
+                      width: width),
                 ),
               );
               setState(() {});

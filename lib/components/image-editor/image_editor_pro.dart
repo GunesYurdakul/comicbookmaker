@@ -3,24 +3,22 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projectX/components/image-editor/modules/speechbubble_chooser/stickers.dart';
 import './modules/bottombar_container.dart';
 import './modules/colors_picker.dart';
-import './modules/sticker.dart';
-import './modules/text.dart';
+import './modules/sticker_chooser/sticker.dart';
 import 'package:path_provider/path_provider.dart';
-import './modules/stickers.dart';
+import './modules/sticker_chooser/stickers.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
-var width = 300;
-var height = 300;
 
+int width = 100;
+int height = 100;
 List fontsize = [];
 var howmuchwidgetis = 0;
 List multiwidget = [];
@@ -31,9 +29,11 @@ SignatureController _controller =
 
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
+  final int width;
+  final int height;
   final Color bottomBarColor;
-  ImageEditorPro({this.appBarColor, this.bottomBarColor});
-
+  ImageEditorPro(
+      {this.width, this.height, this.appBarColor, this.bottomBarColor});
   @override
   _ImageEditorProState createState() => _ImageEditorProState();
 }
@@ -44,7 +44,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   // create some values
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
-
 // ValueChanged<Color> callback
   void changeColor(Color color) {
     setState(() => pickerColor = color);
@@ -90,6 +89,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     offsets.clear();
     multiwidget.clear();
     howmuchwidgetis = 0;
+    width = widget.width;
+    width = widget.height;
     // TODO: implement initState
     super.initState();
   }
@@ -101,67 +102,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         key: scaf,
         appBar: new AppBar(
           actions: <Widget>[
-            new IconButton(
-                icon: Icon(FontAwesomeIcons.boxes, color: Colors.black),
-                onPressed: () {
-                  showCupertinoDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: new Text("Select Height Width"),
-                          actions: <Widget>[
-                            FlatButton(
-                                onPressed: () {
-                                  setState(() {
-                                    height = int.parse(heightcontroler.text);
-                                    width = int.parse(widthcontroler.text);
-                                  });
-                                  heightcontroler.clear();
-                                  widthcontroler.clear();
-                                  Navigator.pop(context);
-                                },
-                                child: new Text("Done"))
-                          ],
-                          content: new SingleChildScrollView(
-                            child: new Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                new Text("Define Height"),
-                                new SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                    controller: heightcontroler,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                    decoration: InputDecoration(
-                                        hintText: 'Height',
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
-                                        border: OutlineInputBorder())),
-                                new SizedBox(
-                                  height: 10,
-                                ),
-                                new Text("Define Width"),
-                                new SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                    controller: widthcontroler,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                    decoration: InputDecoration(
-                                        hintText: 'Width',
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
-                                        border: OutlineInputBorder())),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                }),
             new IconButton(
                 icon: Icon(Icons.clear, color: Colors.black),
                 onPressed: () {
@@ -260,7 +200,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   children: <Widget>[
                     BottomBarContainer(
                       colors: widget.bottomBarColor,
-                      icons: FontAwesomeIcons.brush,
+                      icons: Icons.brush,
                       ontap: () {
                         // raise the [showDialog] widget
                         showDialog(
@@ -288,7 +228,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       },
                       title: 'Brush',
                     ),
-                    BottomBarContainer(
+/*                     BottomBarContainer(
                       icons: Icons.text_fields,
                       ontap: () async {
                         final value = await Navigator.push(
@@ -306,9 +246,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         }
                       },
                       title: 'Text',
-                    ),
+                    ), */
                     BottomBarContainer(
-                      icons: FontAwesomeIcons.eraser,
+                      icons: Icons.delete,
                       ontap: () {
                         _controller.clear();
                         type.clear();
@@ -319,7 +259,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       },
                       title: 'Eraser',
                     ),
-                    BottomBarContainer(
+/*                     BottomBarContainer(
                       icons: Icons.photo,
                       ontap: () {
                         showModalBottomSheet(
@@ -330,8 +270,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       },
                       title: 'Filter',
                     ),
+                    Bot */
                     BottomBarContainer(
-                      icons: FontAwesomeIcons.smile,
+                      icons: Icons.sticky_note_2_rounded,
                       ontap: () {
                         Future getemojis = showModalBottomSheet(
                             context: context,
@@ -349,7 +290,28 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           }
                         });
                       },
-                      title: 'Emoji',
+                      title: 'Sticker',
+                    ),
+                    BottomBarContainer(
+                      icons: Icons.sticky_note_2_rounded,
+                      ontap: () {
+                        Future getemojis = showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SpeechBubbles();
+                            });
+                        getemojis.then((value) {
+                          if (value != null) {
+                            print(value);
+                            type.add(1);
+                            fontsize.add(20);
+                            offsets.add(Offset.zero);
+                            multiwidget.add(value);
+                            howmuchwidgetis++;
+                          }
+                        });
+                      },
+                      title: 'SpeechBubble',
                     ),
                   ],
                 ),
@@ -471,9 +433,7 @@ class _SignatState extends State<Signat> {
 
   @override
   Widget build(BuildContext context) {
-    return //SIGNATURE CANVAS
-        //SIGNATURE CANVAS
-        ListView(
+    return ListView(
       children: <Widget>[
         Signature(
             controller: _controller,

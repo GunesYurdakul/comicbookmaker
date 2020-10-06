@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class StickerView extends StatefulWidget {
+class SpeechBubbleView extends StatefulWidget {
   final double left;
   final double top;
   final Function(ScaleStartDetails) onScaleStart;
   final Function(ScaleUpdateDetails) onScaleUpdate;
   final double fontsize;
   final String value;
-  const StickerView(
+  const SpeechBubbleView(
       {Key key,
       this.left,
       this.top,
@@ -18,10 +18,10 @@ class StickerView extends StatefulWidget {
       this.value})
       : super(key: key);
   @override
-  _EmojiViewState createState() => _EmojiViewState();
+  _SpeechBubbleViewState createState() => _SpeechBubbleViewState();
 }
 
-class _EmojiViewState extends State<StickerView> {
+class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   double _baseScaleFactor = 1;
   double _scaleFactor = 1;
   double width = 100;
