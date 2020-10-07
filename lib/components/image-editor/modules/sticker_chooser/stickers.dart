@@ -75,7 +75,7 @@ class _StickersState extends State<Stickers> {
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     var manifestMap = json.decode(manifestContent);
     return manifestMap.keys
-        .where((String key) => key.contains('singles/'))
+        .where((String key) => key.contains('stickers/'))
         .toList();
   }
 

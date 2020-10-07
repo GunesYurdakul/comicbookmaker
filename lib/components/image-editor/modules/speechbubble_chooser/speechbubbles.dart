@@ -7,7 +7,7 @@ class SpeechBubbles extends StatefulWidget {
 }
 
 class _SpeechBubblesState extends State<SpeechBubbles> {
-  Future<List<String>> SpeechBubbles;
+  Future<List<String>> speechBubbles;
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<List<String>>(
@@ -75,7 +75,7 @@ class _SpeechBubblesState extends State<SpeechBubbles> {
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     var manifestMap = json.decode(manifestContent);
     return manifestMap.keys
-        .where((String key) => key.contains('singles/'))
+        .where((String key) => key.contains('speechbubbles/'))
         .toList();
   }
 

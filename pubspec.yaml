@@ -66,7 +66,9 @@ flutter:
   assets:
     - assets/stickers/comic-bright-speech-bubbles-set-with-colorful-wordings-clouds-halftone-humor-effects/singles/
     - assets/stickers/speech-bubbles-hand-drawn-coloring/singles/
-
+    - assets/speechbubbles/collection-of-speech-bubbles-vector/singles/
+    - assets/speechbubbles/hand-drawn-sketch-speech-bubble-set-design/singles/
+    - assets/speechbubbles/hand-drawn-speech-bubble-collection/singles/
   fonts:
     - family: AdemWarren
       fonts:

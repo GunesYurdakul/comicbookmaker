@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projectX/components/image-editor/modules/speechbubble_chooser/stickers.dart';
+import 'package:projectX/components/image-editor/modules/speechbubble_chooser/speechbubble.dart';
+import 'package:projectX/components/image-editor/modules/speechbubble_chooser/speechbubbles.dart';
 import './modules/bottombar_container.dart';
 import './modules/colors_picker.dart';
 import './modules/sticker_chooser/sticker.dart';
@@ -17,11 +18,12 @@ import 'package:signature/signature.dart';
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
 
-int width = 100;
-int height = 100;
+int width = 800;
+int height = 800;
 List fontsize = [];
-var howmuchwidgetis = 0;
 List multiwidget = [];
+List stickerWidget = [];
+List bubbleWidget = [];
 Color currentcolors = Colors.white;
 var opicity = 0.0;
 SignatureController _controller =
@@ -88,7 +90,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     fontsize.clear();
     offsets.clear();
     multiwidget.clear();
-    howmuchwidgetis = 0;
     width = widget.width;
     width = widget.height;
     // TODO: implement initState
@@ -160,25 +161,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               fit: BoxFit.cover,
                             )
                           : Container(),
-                      Container(
-                        child: GestureDetector(
-                            onPanUpdate: (DragUpdateDetails details) {
-                              setState(() {
-                                RenderBox object = context.findRenderObject();
-                                Offset _localPosition = object
-                                    .globalToLocal(details.globalPosition);
-                                _points = new List.from(_points)
-                                  ..add(_localPosition);
-                              });
-                            },
-                            onPanEnd: (DragEndDetails details) {
-                              _points.add(null);
-                            },
-                            child: Signat()),
+                      Stack(
+                        children: stickerWidget.asMap().entries.map((f) {
+                          return StickerView(
+                            value: f.value,
+                          );
+                        }).toList(),
                       ),
                       Stack(
-                        children: multiwidget.asMap().entries.map((f) {
-                          return StickerView(
+                        children: bubbleWidget.asMap().entries.map((f) {
+                          return SpeechBubbleView(
                             value: f.value,
                           );
                         }).toList(),
@@ -242,7 +234,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           fontsize.add(20);
                           offsets.add(Offset.zero);
                           multiwidget.add(value);
-                          howmuchwidgetis++;
                         }
                       },
                       title: 'Text',
@@ -255,22 +246,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         fontsize.clear();
                         offsets.clear();
                         multiwidget.clear();
-                        howmuchwidgetis = 0;
                       },
                       title: 'Eraser',
                     ),
-/*                     BottomBarContainer(
-                      icons: Icons.photo,
-                      ontap: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return ColorPiskersSlider();
-                            });
-                      },
-                      title: 'Filter',
-                    ),
-                    Bot */
                     BottomBarContainer(
                       icons: Icons.sticky_note_2_rounded,
                       ontap: () {
@@ -282,11 +260,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         getemojis.then((value) {
                           if (value != null) {
                             print(value);
-                            type.add(1);
-                            fontsize.add(20);
                             offsets.add(Offset.zero);
-                            multiwidget.add(value);
-                            howmuchwidgetis++;
+                            stickerWidget.add(value);
                           }
                         });
                       },
@@ -295,19 +270,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     BottomBarContainer(
                       icons: Icons.sticky_note_2_rounded,
                       ontap: () {
-                        Future getemojis = showModalBottomSheet(
+                        Future getBubbles = showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {
                               return SpeechBubbles();
                             });
-                        getemojis.then((value) {
+                        getBubbles.then((value) {
                           if (value != null) {
                             print(value);
-                            type.add(1);
-                            fontsize.add(20);
                             offsets.add(Offset.zero);
-                            multiwidget.add(value);
-                            howmuchwidgetis++;
+                            bubbleWidget.add(value);
                           }
                         });
                       },
