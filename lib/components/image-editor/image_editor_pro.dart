@@ -245,7 +245,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         type.clear();
                         fontsize.clear();
                         offsets.clear();
-                        multiwidget.clear();
+                        stickerWidget.clear();
+                        bubbleWidget.clear();
                       },
                       title: 'Eraser',
                     ),
