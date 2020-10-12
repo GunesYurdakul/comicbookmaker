@@ -1,19 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projectX/components/image-editor/modules/speechbubble_chooser/speechbubble.dart';
-import 'package:projectX/components/image-editor/modules/speechbubble_chooser/speechbubbles.dart';
-import './modules/bottombar_container.dart';
 import './modules/colors_picker.dart';
 import './modules/sticker_chooser/sticker.dart';
 import 'package:path_provider/path_provider.dart';
-import './modules/sticker_chooser/stickers.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
+
+import 'modules/speechbubble_chooser/speechbubbles.dart';
+import 'modules/sticker_chooser/stickers.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
@@ -99,26 +100,19 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.black,
         key: scaf,
         appBar: new AppBar(
           actions: <Widget>[
             new IconButton(
-                icon: Icon(Icons.clear, color: Colors.black),
-                onPressed: () {
-                  _controller.points.clear();
-                  setState(() {});
-                }),
-            new IconButton(
-                icon: Icon(Icons.camera, color: Colors.black),
+                icon: Icon(Icons.add_a_photo, color: Colors.black),
                 onPressed: () {
                   bottomsheets();
                 }),
-            new FlatButton(
-                child: new Text("Done"),
-                textColor: Colors.black,
+            new IconButton(
+                icon: Icon(Icons.check, color: Colors.black),
                 onPressed: () {
-                  File _imageFile;
+/*                   File _imageFile;
                   _imageFile = null;
                   screenshotController
                       .capture(
@@ -136,10 +130,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
-                  });
+                  }); */
                 }),
           ],
-          backgroundColor: widget.appBarColor,
+          backgroundColor: Colors.pink,
         ),
         body: Center(
           child: Screenshot(
@@ -183,76 +177,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         bottomNavigationBar: openbottomsheet
             ? new Container()
             : Container(
-                decoration: BoxDecoration(
-                    color: widget.bottomBarColor,
-                    boxShadow: [BoxShadow(blurRadius: 10.9)]),
-                height: 70,
-                child: new ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    BottomBarContainer(
-                      colors: widget.bottomBarColor,
-                      icons: Icons.brush,
-                      ontap: () {
-                        // raise the [showDialog] widget
-                        showDialog(
-                            context: context,
-                            child: AlertDialog(
-                              title: const Text('Pick a color!'),
-                              content: SingleChildScrollView(
-                                child: ColorPicker(
-                                  pickerColor: pickerColor,
-                                  onColorChanged: changeColor,
-                                  showLabel: true,
-                                  pickerAreaHeightPercent: 0.8,
-                                ),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: const Text('Got it'),
-                                  onPressed: () {
-                                    setState(() => currentColor = pickerColor);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ));
-                      },
-                      title: 'Brush',
-                    ),
-/*                     BottomBarContainer(
-                      icons: Icons.text_fields,
-                      ontap: () async {
-                        final value = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TextEditor()));
-                        if (value.toString().isEmpty) {
-                          print("true");
-                        } else {
-                          type.add(2);
-                          fontsize.add(20);
-                          offsets.add(Offset.zero);
-                          multiwidget.add(value);
-                        }
-                      },
-                      title: 'Text',
-                    ), */
-                    BottomBarContainer(
-                      icons: Icons.delete,
-                      ontap: () {
-                        _controller.clear();
-                        type.clear();
-                        fontsize.clear();
-                        offsets.clear();
-                        stickerWidget.clear();
-                        bubbleWidget.clear();
-                      },
-                      title: 'Eraser',
-                    ),
-                    BottomBarContainer(
-                      icons: Icons.sticky_note_2_rounded,
-                      ontap: () {
+                child: CurvedNavigationBar(
+                  animationDuration: Duration(milliseconds: 200),
+                  backgroundColor: Colors.pinkAccent[700],
+                  items: <Widget>[
+                    Icon(Icons.chat_bubble_outline, size: 30),
+                    Icon(Icons.filter_frames, size: 30),
+                    Icon(Icons.gesture, size: 30),
+                  ],
+                  onTap: (index) {
+                    switch (index) {
+                      case 0:
                         Future getemojis = showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {
@@ -265,8 +200,42 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             stickerWidget.add(value);
                           }
                         });
+                        break;
+                      case 1:
+                        Future getBubbles = showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SpeechBubbles();
+                            });
+                        getBubbles.then((value) {
+                          if (value != null) {
+                            print(value);
+                            offsets.add(Offset.zero);
+                            bubbleWidget.add(value);
+                          }
+                        });
+                        break;
+                      case 2:
+                        brush();
+                        break;
+                      default:
+                        print(index);
+                    }
+                  },
+                ), /* new ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    BottomBarContainer(
+                      icons: Icons.delete,
+                      ontap: () {
+                        _controller.clear();
+                        type.clear();
+                        fontsize.clear();
+                        offsets.clear();
+                        stickerWidget.clear();
+                        bubbleWidget.clear();
                       },
-                      title: 'Sticker',
+                      title: 'Eraser',
                     ),
                     BottomBarContainer(
                       icons: Icons.sticky_note_2_rounded,
@@ -287,8 +256,33 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       title: 'SpeechBubble',
                     ),
                   ],
-                ),
+                ), */
               ));
+  }
+
+  brush() {
+    showDialog(
+        context: context,
+        child: AlertDialog(
+          title: const Text('Pick a color!'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: pickerColor,
+              onColorChanged: changeColor,
+              showLabel: true,
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('Got it'),
+              onPressed: () {
+                setState(() => currentColor = pickerColor);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ));
   }
 
   void bottomsheets() {
@@ -465,49 +459,5 @@ class _SlidersState extends State<Sliders> {
                 }),
           ],
         ));
-  }
-}
-
-class ColorPiskersSlider extends StatefulWidget {
-  @override
-  _ColorPiskersSliderState createState() => _ColorPiskersSliderState();
-}
-
-class _ColorPiskersSliderState extends State<ColorPiskersSlider> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      height: 260,
-      color: Colors.white,
-      child: new Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: new Text("Slider Filter Color"),
-          ),
-          Divider(
-            height: 1,
-          ),
-          SizedBox(height: 20),
-          new Text("Slider Color"),
-          SizedBox(height: 10),
-          BarColorPicker(
-              width: 300,
-              thumbColor: Colors.white,
-              cornerRadius: 10,
-              pickMode: PickMode.Color,
-              colorListener: (int value) {
-                setState(() {
-                  //  currentColor = Color(value);
-                });
-              }),
-          SizedBox(height: 20),
-          new Text("Slider Opicity"),
-          SizedBox(height: 10),
-          Slider(value: 0.1, min: 0.0, max: 1.0, onChanged: (v) {})
-        ],
-      ),
-    );
   }
 }

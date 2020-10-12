@@ -27,6 +27,8 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   double _scaleFactor = 1;
   double width = 100;
   double height = 100;
+  double _fontSize = 15;
+  Color _textColor = Colors.black;
   String text = 'Text';
   Offset lastPosition;
   bool _isEditingText = false;
@@ -63,8 +65,8 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
                   height: height * _scaleFactor,
                 )),
                 Container(
-                  width: 40,
-                  height: 20,
+                  width: width * _scaleFactor / 2,
+                  height: height * _scaleFactor / 3,
                   child: _editTitleTextField(),
                 )
               ])),
@@ -93,10 +95,15 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
     if (_isEditingText)
       return Center(
         child: TextField(
-          onSubmitted: (newValue) {
+          style: TextStyle(
+              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
+          enableSuggestions: true,
+          keyboardType: TextInputType.multiline,
+          minLines: 1, //Normal textInputField will be displayed
+          maxLines: 5, // when
+          onChanged: (newValue) {
             setState(() {
               text = newValue;
-              _isEditingText = false;
             });
           },
           autofocus: true,
@@ -112,9 +119,7 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
         child: Text(
           text,
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.0,
-          ),
+              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
         ));
   }
 }
