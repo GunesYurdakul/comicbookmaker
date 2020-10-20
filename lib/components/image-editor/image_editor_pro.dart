@@ -23,8 +23,8 @@ int width = 800;
 int height = 800;
 List fontsize = [];
 List multiwidget = [];
-List stickerWidget = [];
-List bubbleWidget = [];
+List<Widget> stickerWidget = [];
+List<Widget> bubbleWidget = [];
 Color currentcolors = Colors.white;
 var opicity = 0.0;
 SignatureController _controller =
@@ -55,7 +55,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         SignatureController(penStrokeWidth: 5, penColor: color, points: points);
   }
 
-  List<Offset> offsets = [];
   Offset offset1 = Offset.zero;
   Offset offset2 = Offset.zero;
   final scaf = GlobalKey<ScaffoldState>();
@@ -90,7 +89,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     _controller.clear();
     type.clear();
     fontsize.clear();
-    offsets.clear();
     multiwidget.clear();
     width = widget.width;
     width = widget.height;
@@ -114,9 +112,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 icon: Icon(Icons.check, color: Colors.black),
                 onPressed: () {
                   _imageFile = null;
-                  screenshotController.capture(
-                    pixelRatio: 6
-                  ).then((File image) async {
+                  screenshotController
+                      .capture(pixelRatio: 6)
+                      .then((File image) async {
                     setState(() {
                       _imageFile = image;
                     });
@@ -155,16 +153,12 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           : Container(),
                       Stack(
                         children: stickerWidget.asMap().entries.map((f) {
-                          return StickerView(
-                            value: f.value,
-                          );
+                          return f.value;
                         }).toList(),
                       ),
                       Stack(
                         children: bubbleWidget.asMap().entries.map((f) {
-                          return SpeechBubbleView(
-                            value: f.value,
-                          );
+                          return f.value;
                         }).toList(),
                       )
                     ],
@@ -186,30 +180,23 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onTap: (index) {
                     switch (index) {
                       case 0:
-                        Future getemojis = showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Stickers();
-                            });
+                        Future getemojis = showChooserDialog('stickers');
                         getemojis.then((value) {
                           if (value != null) {
                             print(value);
-                            offsets.add(Offset.zero);
-                            stickerWidget.add(value);
+                            stickerWidget.add(new StickerView(
+                              value: value,
+                            ));
                           }
                         });
                         break;
                       case 1:
-                        Future getBubbles = showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SpeechBubbles();
-                            });
+                        Future getBubbles = showChooserDialog('bubbles');
                         getBubbles.then((value) {
                           if (value != null) {
-                            print(value);
-                            offsets.add(Offset.zero);
-                            bubbleWidget.add(value);
+                            bubbleWidget.add(new SpeechBubbleView(
+                              value: value,
+                            ));
                           }
                         });
                         break;
@@ -247,6 +234,38 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             ),
           ],
         ));
+  }
+
+  showChooserDialog(type) {
+    return showGeneralDialog(
+      barrierLabel: "Label",
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: Duration(milliseconds: 400),
+      context: context,
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: 250,
+            child: SizedBox.expand(
+                child: type == 'stickers' ? Stickers() : SpeechBubbles()),
+            margin: EdgeInsets.only(bottom: 90, left: 12, right: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position:
+              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+          child: child,
+        );
+      },
+    );
   }
 
   void bottomsheets() {
@@ -417,7 +436,6 @@ class _SlidersState extends State<Sliders> {
                 onChanged: (v) {
                   setState(() {
                     slider = v;
-                    print(v.toInt());
                     fontsize[widget.size] = v.toInt();
                   });
                 }),

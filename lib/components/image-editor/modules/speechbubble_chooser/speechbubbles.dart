@@ -15,30 +15,14 @@ class _SpeechBubblesState extends State<SpeechBubbles> {
         builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.data != null) {
             return Container(
-                height: 400,
+                height: 300,
                 decoration: BoxDecoration(color: Colors.white, boxShadow: [
                   BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
                 ]),
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          new Text("Select Sticker"),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    new SizedBox(
-                      height: 10,
-                    ),
                     Container(
-                      height: 315,
+                      height: 250,
                       child: GridView(
                           shrinkWrap: true,
                           physics: ClampingScrollPhysics(),

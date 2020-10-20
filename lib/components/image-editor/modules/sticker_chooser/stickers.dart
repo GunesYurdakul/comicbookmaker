@@ -21,24 +21,8 @@ class _StickersState extends State<Stickers> {
                 ]),
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          new Text("Select Sticker"),
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    new SizedBox(
-                      height: 10,
-                    ),
                     Container(
-                      height: 315,
+                      height: 250,
                       child: GridView(
                           shrinkWrap: true,
                           physics: ClampingScrollPhysics(),
