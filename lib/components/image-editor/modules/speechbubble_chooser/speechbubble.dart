@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:screenshot/screenshot.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class SpeechBubbleView extends StatefulWidget {
   final double left;
@@ -10,6 +11,8 @@ class SpeechBubbleView extends StatefulWidget {
   final double fontsize;
   final String value;
   const SpeechBubbleView(
+    // color, fontsize ve fontu parametre olarak al
+    // hareket halindeyken de bir şeyler emit falan etsin kii çöp kutusu çıkısn
       {Key key,
       this.left,
       this.top,
@@ -25,8 +28,8 @@ class SpeechBubbleView extends StatefulWidget {
 class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   double _baseScaleFactor = 1;
   double _scaleFactor = 1;
-  double width = 100;
-  double height = 100;
+  double width = 200;
+  double height = 200;
   double _fontSize = 15;
   Color _textColor = Colors.black;
   String text = 'Text';
@@ -36,6 +39,9 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   var lastRotation = 0.0;
   var rotation = 0.0;
   Offset offset = Offset(0, 0);
+  Offset position = Offset(0, 0);
+  final _focusNodeName = FocusNode();
+  final _focusNodeQuantity = FocusNode();
 
   @override
   void initState() {
@@ -52,24 +58,38 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        left: offset.dx,
-        top: offset.dy,
+        left: position.dx,
+        top: position.dy,
         child: GestureDetector(
           child: Transform.rotate(
               angle: (pi / 180) * rotation,
-              child: Stack(alignment: Alignment.center, children: <Widget>[
-                Container(
-                    child: Image(
-                  image: AssetImage(widget.value),
-                  width: width * _scaleFactor,
-                  height: height * _scaleFactor,
-                )),
-                Container(
-                  width: width * _scaleFactor / 2,
-                  height: height * _scaleFactor / 3,
-                  child: _editTitleTextField(),
-                )
-              ])),
+              child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                        Container(
+                            child: Image(
+                          image: AssetImage(widget.value),
+                          width: width * _scaleFactor,
+                          height: height * _scaleFactor,
+                        )),
+                        Container(
+                          width: width * _scaleFactor / 2,
+                          height: height * _scaleFactor / 3,
+                          child: KeyboardActions(
+                              // tapOutsideToDismiss: true, //simdilik false cünkü dışarı tıklayıncaki eventi yakalayıp isediting false yapamadım
+                              config: KeyboardActionsConfig(
+                                keyboardBarColor: Color.fromARGB(120, 0, 0, 0),
+                                actions: [
+                                  KeyboardActionsItem(
+                                    focusNode: _focusNodeName,
+                                    onTapAction: () => {_isEditingText = false},
+                                  ),
+                                ],
+                              ),
+                              child: _editTitleTextField()),
+                        ),
+                      ] +
+                      colorFormatEditingWidgets())),
           onScaleStart: (details) {
             _baseScaleFactor = _scaleFactor;
             lastPosition = details.localFocalPoint;
@@ -79,6 +99,7 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
               print(rotation);
               _scaleFactor = _baseScaleFactor * details.scale;
               offset -= (lastPosition - details.localFocalPoint);
+              position = offset;
               rotation += details.rotation;
               lastRotation = details.rotation;
               lastPosition = details.localFocalPoint;
@@ -95,6 +116,10 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
     if (_isEditingText)
       return Center(
         child: TextField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+          ),
+          focusNode: _focusNodeName,
           style: TextStyle(
               color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
           enableSuggestions: true,
@@ -102,6 +127,7 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
           minLines: 1, //Normal textInputField will be displayed
           maxLines: 5, // when
           onChanged: (newValue) {
+            _focusNodeName.requestFocus();
             setState(() {
               text = newValue;
             });
@@ -121,5 +147,24 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
           style: TextStyle(
               color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
         ));
+  }
+
+  List<Widget> colorFormatEditingWidgets() {
+    if (_isEditingText)
+      return [
+        Positioned(
+          right: 0,
+          top: 0,
+          width: 50,
+          height: 50,
+          child: Icon(
+            Icons.cancel,
+            color: Colors.black,
+          ),
+        )
+      ];
+    else {
+      return [Container()];
+    }
   }
 }

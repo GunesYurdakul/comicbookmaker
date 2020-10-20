@@ -63,6 +63,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   List<Offset> _points = <Offset>[];
   List type = [];
   List aligment = [];
+  File _imageFile;
 
   final GlobalKey container = GlobalKey();
   final GlobalKey globalKey = new GlobalKey();
@@ -112,25 +113,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             new IconButton(
                 icon: Icon(Icons.check, color: Colors.black),
                 onPressed: () {
-/*                   File _imageFile;
                   _imageFile = null;
-                  screenshotController
-                      .capture(
-                          delay: Duration(milliseconds: 500), pixelRatio: 1.5)
-                      .then((File image) async {
-                    //print("Capture Done");
+                  screenshotController.capture(
+                    pixelRatio: 6
+                  ).then((File image) async {
                     setState(() {
                       _imageFile = image;
                     });
                     final paths = await getExternalStorageDirectory();
-                    image.copy(paths.path +
+                    await image.copy(paths.path +
                         '/' +
                         DateTime.now().millisecondsSinceEpoch.toString() +
                         '.png');
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
-                  }); */
+                  });
                 }),
           ],
           backgroundColor: Colors.pink,
@@ -222,41 +220,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         print(index);
                     }
                   },
-                ), /* new ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    BottomBarContainer(
-                      icons: Icons.delete,
-                      ontap: () {
-                        _controller.clear();
-                        type.clear();
-                        fontsize.clear();
-                        offsets.clear();
-                        stickerWidget.clear();
-                        bubbleWidget.clear();
-                      },
-                      title: 'Eraser',
-                    ),
-                    BottomBarContainer(
-                      icons: Icons.sticky_note_2_rounded,
-                      ontap: () {
-                        Future getBubbles = showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SpeechBubbles();
-                            });
-                        getBubbles.then((value) {
-                          if (value != null) {
-                            print(value);
-                            offsets.add(Offset.zero);
-                            bubbleWidget.add(value);
-                          }
-                        });
-                      },
-                      title: 'SpeechBubble',
-                    ),
-                  ],
-                ), */
+                ),
               ));
   }
 

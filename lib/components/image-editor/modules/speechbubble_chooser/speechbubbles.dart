@@ -75,7 +75,7 @@ class _SpeechBubblesState extends State<SpeechBubbles> {
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     var manifestMap = json.decode(manifestContent);
     return manifestMap.keys
-        .where((String key) => key.contains('speechbubbles/'))
+        .where((String key) => key.contains('speechbubbles/') && (  key.contains('.png') || key.contains('.jpg')))
         .toList();
   }
 

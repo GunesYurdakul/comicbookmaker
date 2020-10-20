@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class ImageItem extends StatefulWidget {
 
 class _ImageItemState extends State<ImageItem>
     with SingleTickerProviderStateMixin {
-  Image _image; //image to load
+  File _image; //image to load
   String _key;
 
   //List<Sticker> stickers;
@@ -33,7 +35,7 @@ class _ImageItemState extends State<ImageItem>
         child: InkWell(
             child: _image != null
                 ? FittedBox(
-                    child: _image,
+                    child: Image.file(_image),
                     fit: BoxFit.fitHeight,
                   )
                 : Container(),

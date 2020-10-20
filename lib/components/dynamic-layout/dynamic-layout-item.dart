@@ -25,8 +25,6 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
     return Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.all(10),
-        color: Colors.black,
         child: InkWell(child: new ImageItem()));
   }
 
