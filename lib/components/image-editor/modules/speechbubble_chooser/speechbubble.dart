@@ -10,9 +10,10 @@ class SpeechBubbleView extends StatefulWidget {
   final Function(ScaleUpdateDetails) onScaleUpdate;
   final double fontsize;
   final String value;
-  const SpeechBubbleView(
-    // color, fontsize ve fontu parametre olarak al
-    // hareket halindeyken de bir şeyler emit falan etsin kii çöp kutusu çıkısn
+  _SpeechBubbleViewState state=_SpeechBubbleViewState();
+  SpeechBubbleView(
+      // color, fontsize ve fontu parametre olarak al
+      // hareket halindeyken de bir şeyler emit falan etsin kii çöp kutusu çıkısn
       {Key key,
       this.left,
       this.top,
@@ -36,22 +37,36 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   Offset lastPosition;
   bool _isEditingText = false;
   TextEditingController _editingController;
-  var lastRotation = 0.0;
   var rotation = 0.0;
   Offset offset = Offset(0, 0);
   Offset position = Offset(0, 0);
   final _focusNodeName = FocusNode();
-  final _focusNodeQuantity = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _editingController = TextEditingController(text: text);
+    if(widget.state!=null){
+      position = widget.state.position;
+      lastPosition = widget.state.lastPosition;
+      offset = widget.state.offset;
+      width = widget.state.width;
+      height = widget.state.height;
+      _scaleFactor = widget.state._scaleFactor;
+      rotation = widget.state.rotation;
+      }  
+      _editingController = TextEditingController(text: text);
   }
 
   @override
   void dispose() {
     _editingController.dispose();
+    widget.state.position = position;
+    widget.state.offset = offset;
+    widget.state.rotation = rotation;
+    widget.state.lastPosition = lastPosition;
+    widget.state.width = width;
+    widget.state.height = height;
+    widget.state._scaleFactor = _scaleFactor;
     super.dispose();
   }
 
@@ -101,7 +116,6 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
               offset -= (lastPosition - details.localFocalPoint);
               position = offset;
               rotation += details.rotation;
-              lastRotation = details.rotation;
               lastPosition = details.localFocalPoint;
             });
           },

@@ -25,6 +25,7 @@ List fontsize = [];
 List multiwidget = [];
 List<Widget> stickerWidget = [];
 List<Widget> bubbleWidget = [];
+File _image;
 Color currentcolors = Colors.white;
 var opicity = 0.0;
 SignatureController _controller =
@@ -66,7 +67,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   final GlobalKey container = GlobalKey();
   final GlobalKey globalKey = new GlobalKey();
-  File _image;
   ScreenshotController screenshotController = ScreenshotController();
   Timer timeprediction;
   void timers() {
@@ -118,11 +118,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     setState(() {
                       _imageFile = image;
                     });
-                    final paths = await getExternalStorageDirectory();
-                    await image.copy(paths.path +
-                        '/' +
-                        DateTime.now().millisecondsSinceEpoch.toString() +
-                        '.png');
+                    //final paths = await getExternalStorageDirectory();
+                    //await image.copy(paths.path +
+                      //  '/' +
+                        //DateTime.now().millisecondsSinceEpoch.toString() +
+                        //'.png');
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
@@ -196,6 +196,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           if (value != null) {
                             bubbleWidget.add(new SpeechBubbleView(
                               value: value,
+                              left: 0,
+                              top: 0,
                             ));
                           }
                         });
@@ -241,7 +243,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       barrierLabel: "Label",
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: Duration(milliseconds: 400),
+      transitionDuration: Duration(milliseconds: 200),
       context: context,
       pageBuilder: (context, anim1, anim2) {
         return Align(

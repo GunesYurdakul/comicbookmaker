@@ -8,7 +8,8 @@ class StickerView extends StatefulWidget {
   final Function(ScaleUpdateDetails) onScaleUpdate;
   final double fontsize;
   final String value;
-  const StickerView(
+  _StickerViewState state = _StickerViewState();
+  StickerView(
       {Key key,
       this.left,
       this.top,
@@ -30,6 +31,32 @@ class _StickerViewState extends State<StickerView> {
   var lastRotation = 0.0;
   var rotation = 0.0;
   Offset offset = Offset(0, 0);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.state != null) {
+      lastPosition = widget.state.lastPosition;
+      offset = widget.state.offset;
+      width = widget.state.width;
+      rotation = widget.state.rotation;
+      height = widget.state.height;
+      _scaleFactor = widget.state._scaleFactor;
+      rotation = widget.state.rotation;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.state.lastPosition = lastPosition;
+    widget.state.offset = offset;
+    widget.state.width = width;
+    widget.state.rotation = rotation;
+    widget.state.height = height;
+    widget.state._scaleFactor = _scaleFactor;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
