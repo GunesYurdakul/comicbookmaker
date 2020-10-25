@@ -23,9 +23,8 @@ int width = 800;
 int height = 800;
 List fontsize = [];
 List multiwidget = [];
-bool moving = false;
-List<Widget> stickerWidget = [];
-List<Widget> bubbleWidget = [];
+Map<int, Widget> stickerWidgets = new Map<int, Widget>();
+Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
 File _image;
 Color currentcolors = Colors.white;
 var opicity = 0.0;
@@ -65,6 +64,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   List type = [];
   List aligment = [];
   File _imageFile;
+  bool moving = false;
+  int movingIndex;
 
   final GlobalKey container = GlobalKey();
   final GlobalKey globalKey = new GlobalKey();
@@ -79,21 +80,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   @override
   void dispose() {
-    timeprediction.cancel();
     super.dispose();
+    timeprediction.cancel();
   }
 
   @override
   void initState() {
-    timers();
-    _controller.clear();
-    type.clear();
-    fontsize.clear();
-    multiwidget.clear();
-    width = widget.width;
-    width = widget.height;
-    // TODO: implement initState
     super.initState();
+    timers();
   }
 
   @override
@@ -118,11 +112,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     setState(() {
                       _imageFile = image;
                     });
-                    //final paths = await getExternalStorageDirectory();
-                    //await image.copy(paths.path +
-                    //  '/' +
-                    //DateTime.now().millisecondsSinceEpoch.toString() +
-                    //'.png');
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
@@ -152,19 +141,25 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             )
                           : Container(),
                       Stack(
-                        children: stickerWidget.asMap().entries.map((f) {
+                        children: stickerWidgets.values
+                            .toList()
+                            .asMap()
+                            .entries
+                            .map((f) {
                           return f.value;
                         }).toList(),
                       ),
                       Stack(
-                        children: bubbleWidget.asMap().entries.map((f) {
+                        children: bubbleWidgets.values
+                            .toList()
+                            .asMap()
+                            .entries
+                            .map((f) {
                           return f.value;
                         }).toList(),
                       ),
-                      AnimatedOpacity(
-                          opacity: moving ? 0 : 1,
-                          curve: Curves.easeInOut,
-                          duration: Duration(milliseconds: 500),
+                      Visibility(
+                          visible: moving,
                           child: Container(
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -190,15 +185,26 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onTap: (index) {
                     switch (index) {
                       case 0:
-                        Future getemojis = showChooserDialog('stickers');
-                        getemojis.then((value) {
+                        Future getStickers = showChooserDialog('stickers');
+                        getStickers.then((value) {
                           if (value != null) {
-                            stickerWidget.add(new StickerView(
-                              onMoving: () {
-                                print('moving widget');
-                              },
+                            int key = stickerWidgets.length;
+
+                            stickerWidgets[key] = new StickerView(
                               value: value,
-                            ));
+                              onMoving: () {
+                                toggleTrashBin(true);
+                                movingIndex = key;
+                              },
+                              onStopMoving: (state) {
+                                print('stop');
+                                toggleTrashBin(false);
+                              },
+                              onDelete: () {
+                                stickerWidgets.remove(movingIndex);
+                                print('delete');
+                              },
+                            );
                           }
                         });
                         break;
@@ -206,12 +212,24 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         Future getBubbles = showChooserDialog('bubbles');
                         getBubbles.then((value) {
                           if (value != null) {
-                            bubbleWidget.add(new SpeechBubbleView(
+                            int key = bubbleWidgets.length;
+                            bubbleWidgets[key] = new SpeechBubbleView(
                               value: value,
                               onMoving: () {
-                                print('moving widget');
+                                toggleTrashBin(true);
+                                movingIndex = key;
+                                print('moving widget' + moving.toString());
                               },
-                            ));
+                              onStopMoving: (state) {
+                                print('stop');
+                                moving = true;
+                                toggleTrashBin(false);
+                              },
+                              onDelete: () {
+                                bubbleWidgets.remove(movingIndex);
+                                print('delete');
+                              },
+                            );
                           }
                         });
                         break;
@@ -224,6 +242,13 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   },
                 ),
               ));
+  }
+
+  toggleTrashBin(bool value) {
+    print(this.mounted);
+    setState(() {
+      moving = value;
+    });
   }
 
   brush() {

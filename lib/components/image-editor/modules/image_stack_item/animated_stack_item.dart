@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:screenshot/screenshot.dart';
@@ -10,25 +12,30 @@ class AnimatedStackItem extends StatefulWidget {
   final String imagePath;
   final bool hasText;
   final VoidCallback onMoving;
-  _AnimatedStackItemState state = _AnimatedStackItemState();
+  final Function(AnimatedStackItemState) onStopMoving;
+  final VoidCallback onDelete;
+  final Function(Map<String, dynamic>) saveState;
+  final AnimatedStackItemState state;
   AnimatedStackItem(
-      // color, fontsize ve fontu parametre olarak al
-      // hareket halindeyken de bir şeyler emit falan etsin kii çöp kutusu çıkısn
       {Key key,
       this.left,
       this.top,
       this.fontsize,
       this.imagePath,
       this.onMoving,
-      this.hasText})
+      this.hasText,
+      this.onStopMoving,
+      this.onDelete,
+      this.state,
+      this.saveState})
       : super(key: key);
   @override
-  _AnimatedStackItemState createState() => _AnimatedStackItemState();
+  AnimatedStackItemState createState() => AnimatedStackItemState();
 }
 
-class _AnimatedStackItemState extends State<AnimatedStackItem> {
+class AnimatedStackItemState extends State<AnimatedStackItem> {
   double _baseScaleFactor = 1;
-  double _scaleFactor = 1;
+  double scaleFactor = 1;
   double width = 200;
   double height = 200;
   double _fontSize = 15;
@@ -51,7 +58,7 @@ class _AnimatedStackItemState extends State<AnimatedStackItem> {
       offset = widget.state.offset;
       width = widget.state.width;
       height = widget.state.height;
-      _scaleFactor = widget.state._scaleFactor;
+      scaleFactor = widget.state.scaleFactor;
       rotation = widget.state.rotation;
     }
     _editingController = TextEditingController(text: text);
@@ -59,14 +66,16 @@ class _AnimatedStackItemState extends State<AnimatedStackItem> {
 
   @override
   void dispose() {
+    widget.saveState({
+      'position' : position,
+      'lastPosition' : lastPosition,
+      'offset' : offset,
+      'width' : width,
+      'height' : height,
+      'scaleFactor' : scaleFactor,
+      'rotation' : rotation,
+    });
     _editingController.dispose();
-    widget.state.position = position;
-    widget.state.offset = offset;
-    widget.state.rotation = rotation;
-    widget.state.lastPosition = lastPosition;
-    widget.state.width = width;
-    widget.state.height = height;
-    widget.state._scaleFactor = _scaleFactor;
     super.dispose();
   }
 
@@ -84,25 +93,37 @@ class _AnimatedStackItemState extends State<AnimatedStackItem> {
                         Container(
                             child: Image(
                           image: AssetImage(widget.imagePath),
-                          width: width * _scaleFactor,
-                          height: height * _scaleFactor,
+                          width: width * scaleFactor,
+                          height: height * scaleFactor,
                         )),
                         getTextBox()
                       ] +
                       colorFormatEditingWidgets())),
           onScaleStart: (details) {
-            _baseScaleFactor = _scaleFactor;
+            _baseScaleFactor = scaleFactor;
             lastPosition = details.localFocalPoint;
           },
           onScaleUpdate: (details) {
+            widget.onMoving();
             setState(() {
               print(rotation);
-              _scaleFactor = _baseScaleFactor * details.scale;
+              scaleFactor = _baseScaleFactor * details.scale;
               offset -= (lastPosition - details.localFocalPoint);
               position = offset;
               rotation += details.rotation;
               lastPosition = details.localFocalPoint;
             });
+            if (offset.dy < 5) {
+              scaleFactor /= 3;
+            }
+          },
+          onScaleEnd: (endDetails) {
+            if (offset.dy < 5) {
+              widget.onDelete();
+              scaleFactor /= 3;
+            }
+            print('stop moving **');
+            widget.onStopMoving(widget.state);
           },
         ));
   }
@@ -114,8 +135,8 @@ class _AnimatedStackItemState extends State<AnimatedStackItem> {
   Widget getTextBox() {
     return widget.hasText != null
         ? Container(
-            width: width * _scaleFactor / 2,
-            height: height * _scaleFactor / 3,
+            width: width * scaleFactor / 2,
+            height: height * scaleFactor / 3,
             child: KeyboardActions(
                 // tapOutsideToDismiss: true, //simdilik false cünkü dışarı tıklayıncaki eventi yakalayıp isediting false yapamadım
                 config: KeyboardActionsConfig(
