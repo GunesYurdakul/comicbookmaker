@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class StickerView extends StatefulWidget {
+class AnimatedStackItem extends StatefulWidget {
   final double left;
   final double top;
-  final Function(ScaleStartDetails) onScaleStart;
-  final Function(ScaleUpdateDetails) onScaleUpdate;
   final double fontsize;
   final String value;
-  _StickerViewState state = _StickerViewState();
-  StickerView(
-      {Key key,
-      this.left,
-      this.top,
-      this.onScaleStart,
-      this.onScaleUpdate,
-      this.fontsize,
-      this.value})
+  final VoidCallback onMoving;
+  final String imagePath;
+  _AnimatedStackItemState state = _AnimatedStackItemState();
+  AnimatedStackItem(
+      {Key key, this.left, this.top, this.fontsize, this.value, this.onMoving, this.imagePath})
       : super(key: key);
   @override
-  _StickerViewState createState() => _StickerViewState();
+  _AnimatedStackItemState createState() => _AnimatedStackItemState();
 }
 
-class _StickerViewState extends State<StickerView> {
+class _AnimatedStackItemState extends State<AnimatedStackItem> {
   double _baseScaleFactor = 1;
   double _scaleFactor = 1;
   double width = 100;
@@ -66,7 +60,7 @@ class _StickerViewState extends State<StickerView> {
           child: Transform.rotate(
               angle: (pi / 180) * rotation,
               child: Image(
-                image: AssetImage(widget.value),
+                image: AssetImage(widget.imagePath),
                 width: width * _scaleFactor,
                 height: height * _scaleFactor,
               )),
@@ -75,10 +69,17 @@ class _StickerViewState extends State<StickerView> {
             lastPosition = details.localFocalPoint;
           },
           onScaleUpdate: (details) {
+            widget.onMoving();
             setState(() {
-              print(rotation);
               _scaleFactor = _baseScaleFactor * details.scale;
               offset -= (lastPosition - details.localFocalPoint);
+              if (offset.dy < 10 &&
+                  (offset.dx < MediaQuery.of(context).size.width / 2.5 + 10 ||
+                      offset.dx >
+                          MediaQuery.of(context).size.width / 2.5 - 10)) {
+                _scaleFactor /= 3;
+                print('delete');
+              }
               rotation += details.rotation;
               lastRotation = details.rotation;
               lastPosition = details.localFocalPoint;

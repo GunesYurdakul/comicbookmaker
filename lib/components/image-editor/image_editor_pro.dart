@@ -6,15 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projectX/components/image-editor/modules/speechbubble_chooser/speechbubble.dart';
+import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
 import './modules/colors_picker.dart';
-import './modules/sticker_chooser/sticker.dart';
+import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
-import 'modules/speechbubble_chooser/speechbubbles.dart';
-import 'modules/sticker_chooser/stickers.dart';
+import 'modules/image_stack_item/speechbubble_chooser/speechbubbles.dart';
+import 'modules/image_stack_item/sticker_chooser/stickers.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
@@ -23,6 +23,7 @@ int width = 800;
 int height = 800;
 List fontsize = [];
 List multiwidget = [];
+bool moving = false;
 List<Widget> stickerWidget = [];
 List<Widget> bubbleWidget = [];
 File _image;
@@ -79,7 +80,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   @override
   void dispose() {
     timeprediction.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -120,9 +120,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     });
                     //final paths = await getExternalStorageDirectory();
                     //await image.copy(paths.path +
-                      //  '/' +
-                        //DateTime.now().millisecondsSinceEpoch.toString() +
-                        //'.png');
+                    //  '/' +
+                    //DateTime.now().millisecondsSinceEpoch.toString() +
+                    //'.png');
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
@@ -160,7 +160,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         children: bubbleWidget.asMap().entries.map((f) {
                           return f.value;
                         }).toList(),
-                      )
+                      ),
+                      AnimatedOpacity(
+                          opacity: moving ? 0 : 1,
+                          curve: Curves.easeInOut,
+                          duration: Duration(milliseconds: 500),
+                          child: Container(
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                Icon(Icons.delete_outline, size: 40),
+                              ])))
                     ],
                   )),
             ),
@@ -183,8 +193,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         Future getemojis = showChooserDialog('stickers');
                         getemojis.then((value) {
                           if (value != null) {
-                            print(value);
                             stickerWidget.add(new StickerView(
+                              onMoving: () {
+                                print('moving widget');
+                              },
                               value: value,
                             ));
                           }
@@ -196,8 +208,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           if (value != null) {
                             bubbleWidget.add(new SpeechBubbleView(
                               value: value,
-                              left: 0,
-                              top: 0,
+                              onMoving: () {
+                                print('moving widget');
+                              },
                             ));
                           }
                         });
