@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:screenshot/screenshot.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class AnimatedStackItem extends StatefulWidget {
   final double left;
   final double top;
   final double fontsize;
-  final String value;
-  final VoidCallback onMoving;
   final String imagePath;
+  final bool hasText;
+  final VoidCallback onMoving;
   _AnimatedStackItemState state = _AnimatedStackItemState();
   AnimatedStackItem(
-      {Key key, this.left, this.top, this.fontsize, this.value, this.onMoving, this.imagePath})
+      // color, fontsize ve fontu parametre olarak al
+      // hareket halindeyken de bir şeyler emit falan etsin kii çöp kutusu çıkısn
+      {Key key,
+      this.left,
+      this.top,
+      this.fontsize,
+      this.imagePath,
+      this.onMoving,
+      this.hasText})
       : super(key: key);
   @override
   _AnimatedStackItemState createState() => _AnimatedStackItemState();
@@ -19,33 +29,42 @@ class AnimatedStackItem extends StatefulWidget {
 class _AnimatedStackItemState extends State<AnimatedStackItem> {
   double _baseScaleFactor = 1;
   double _scaleFactor = 1;
-  double width = 100;
-  double height = 100;
+  double width = 200;
+  double height = 200;
+  double _fontSize = 15;
+  Color _textColor = Colors.black;
+  String text = 'Text';
   Offset lastPosition;
-  var lastRotation = 0.0;
+  bool _isEditingText = false;
+  TextEditingController _editingController;
   var rotation = 0.0;
   Offset offset = Offset(0, 0);
+  Offset position = Offset(0, 0);
+  final _focusNodeName = FocusNode();
 
   @override
   void initState() {
     super.initState();
     if (widget.state != null) {
+      position = widget.state.position;
       lastPosition = widget.state.lastPosition;
       offset = widget.state.offset;
       width = widget.state.width;
-      rotation = widget.state.rotation;
       height = widget.state.height;
       _scaleFactor = widget.state._scaleFactor;
       rotation = widget.state.rotation;
     }
+    _editingController = TextEditingController(text: text);
   }
 
   @override
   void dispose() {
-    widget.state.lastPosition = lastPosition;
+    _editingController.dispose();
+    widget.state.position = position;
     widget.state.offset = offset;
-    widget.state.width = width;
     widget.state.rotation = rotation;
+    widget.state.lastPosition = lastPosition;
+    widget.state.width = width;
     widget.state.height = height;
     widget.state._scaleFactor = _scaleFactor;
     super.dispose();
@@ -54,37 +73,118 @@ class _AnimatedStackItemState extends State<AnimatedStackItem> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        left: offset.dx,
-        top: offset.dy,
+        left: position.dx,
+        top: position.dy,
         child: GestureDetector(
           child: Transform.rotate(
               angle: (pi / 180) * rotation,
-              child: Image(
-                image: AssetImage(widget.imagePath),
-                width: width * _scaleFactor,
-                height: height * _scaleFactor,
-              )),
+              child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                        Container(
+                            child: Image(
+                          image: AssetImage(widget.imagePath),
+                          width: width * _scaleFactor,
+                          height: height * _scaleFactor,
+                        )),
+                        getTextBox()
+                      ] +
+                      colorFormatEditingWidgets())),
           onScaleStart: (details) {
             _baseScaleFactor = _scaleFactor;
             lastPosition = details.localFocalPoint;
           },
           onScaleUpdate: (details) {
-            widget.onMoving();
             setState(() {
+              print(rotation);
               _scaleFactor = _baseScaleFactor * details.scale;
               offset -= (lastPosition - details.localFocalPoint);
-              if (offset.dy < 10 &&
-                  (offset.dx < MediaQuery.of(context).size.width / 2.5 + 10 ||
-                      offset.dx >
-                          MediaQuery.of(context).size.width / 2.5 - 10)) {
-                _scaleFactor /= 3;
-                print('delete');
-              }
+              position = offset;
               rotation += details.rotation;
-              lastRotation = details.rotation;
               lastPosition = details.localFocalPoint;
             });
           },
         ));
+  }
+
+  getTextInput() {
+    print('getting text');
+  }
+
+  Widget getTextBox() {
+    return widget.hasText != null
+        ? Container(
+            width: width * _scaleFactor / 2,
+            height: height * _scaleFactor / 3,
+            child: KeyboardActions(
+                // tapOutsideToDismiss: true, //simdilik false cünkü dışarı tıklayıncaki eventi yakalayıp isediting false yapamadım
+                config: KeyboardActionsConfig(
+                  keyboardBarColor: Color.fromARGB(120, 0, 0, 0),
+                  actions: [
+                    KeyboardActionsItem(
+                      focusNode: _focusNodeName,
+                      onTapAction: () => {_isEditingText = false},
+                    ),
+                  ],
+                ),
+                child: _editTitleTextField()),
+          )
+        : Container();
+  }
+
+  Widget _editTitleTextField() {
+    if (_isEditingText)
+      return Center(
+        child: TextField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+          ),
+          focusNode: _focusNodeName,
+          style: TextStyle(
+              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
+          enableSuggestions: true,
+          keyboardType: TextInputType.multiline,
+          minLines: 1, //Normal textInputField will be displayed
+          maxLines: 5, // when
+          onChanged: (newValue) {
+            _focusNodeName.requestFocus();
+            setState(() {
+              text = newValue;
+            });
+          },
+          autofocus: true,
+          controller: _editingController,
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isEditingText = true;
+          });
+        },
+        child: Text(
+          text,
+          style: TextStyle(
+              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
+        ));
+  }
+
+  List<Widget> colorFormatEditingWidgets() {
+    if (_isEditingText)
+      return [
+        Positioned(
+          right: 0,
+          top: 0,
+          width: 50,
+          height: 50,
+          child: Icon(
+            Icons.cancel,
+            color: Colors.black,
+          ),
+        )
+      ];
+    else {
+      return [Container()];
+    }
   }
 }
