@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
-import './modules/colors_picker.dart';
 import './modules/image_stack_item/sticker_chooser/sticker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
@@ -23,9 +21,7 @@ int width = 800;
 int height = 800;
 List fontsize = [];
 List multiwidget = [];
-Map<int, Widget> stickerWidgets = new Map<int, Widget>();
-Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
-File _image;
+
 Color currentcolors = Colors.white;
 var opicity = 0.0;
 SignatureController _controller =
@@ -36,8 +32,20 @@ class ImageEditorPro extends StatefulWidget {
   final int width;
   final int height;
   final Color bottomBarColor;
+  final Map<int, Widget> stickerWidgets;
+  final Map<int, Widget> bubbleWidgets;
+  final File image;
+  final void Function(Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image)
+      saveState;
   ImageEditorPro(
-      {this.width, this.height, this.appBarColor, this.bottomBarColor});
+      {this.width,
+      this.height,
+      this.appBarColor,
+      this.bottomBarColor,
+      this.saveState,
+      this.stickerWidgets,
+      this.bubbleWidgets,
+      this.image});
   @override
   _ImageEditorProState createState() => _ImageEditorProState();
 }
@@ -48,6 +56,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   // create some values
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
+  Map<int, Widget> stickerWidgets;
+  Map<int, Widget> bubbleWidgets;
+  File _image;
+
 // ValueChanged<Color> callback
   void changeColor(Color color) {
     setState(() => pickerColor = color);
@@ -80,13 +92,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   @override
   void dispose() {
+    print('DISPOSE');
     super.dispose();
     timeprediction.cancel();
   }
 
   @override
   void initState() {
+    print('init state');
     super.initState();
+    bubbleWidgets = widget.bubbleWidgets;
+    stickerWidgets = widget.stickerWidgets;
+    _image = widget.image;
     timers();
   }
 
@@ -112,6 +129,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     setState(() {
                       _imageFile = image;
                     });
+                    widget.saveState(stickerWidgets, bubbleWidgets, _image);
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
@@ -246,9 +264,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   toggleTrashBin(bool value) {
     print(this.mounted);
-    setState(() {
-      moving = value;
-    });
+    if(this.mounted)
+      setState(() {
+        moving = value;
+      });
   }
 
   brush() {

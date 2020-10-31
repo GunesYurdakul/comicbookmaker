@@ -7,7 +7,6 @@ import '../image-editor/image_editor_pro.dart';
 
 class ImageItem extends StatefulWidget {
   ImageItem({Key key, this.title}) : super(key: key);
-
   final String title;
   @override
   _ImageItemState createState() => _ImageItemState();
@@ -16,7 +15,10 @@ class ImageItem extends StatefulWidget {
 class _ImageItemState extends State<ImageItem>
     with SingleTickerProviderStateMixin {
   File _image; //image to load
+  File _backgroundImage; //image to load
   String _key;
+  Map<int, Widget> stickerWidgets = new Map<int, Widget>();
+  Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
 
   //List<Sticker> stickers;
   //List<SpeechBubble> speech bubbles;
@@ -41,15 +43,22 @@ class _ImageItemState extends State<ImageItem>
                 : Container(),
             onTap: () async {
               _image = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageEditorPro(
-                      appBarColor: Colors.transparent,
-                      bottomBarColor: Colors.blue,
-                      height: height,
-                      width: width),
-                ),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => new ImageEditorPro(
+                            appBarColor: Colors.transparent,
+                            bottomBarColor: Colors.blue,
+                            height: height,
+                            width: width,
+                            stickerWidgets: stickerWidgets,
+                            bubbleWidgets: bubbleWidgets,
+                            image: _backgroundImage,
+                            saveState: (stickers, bubbles, image) {
+                              stickerWidgets = stickers;
+                              bubbleWidgets = bubbles;
+                              _backgroundImage = image;
+                            },
+                          )));
               setState(() {});
             }));
   }
