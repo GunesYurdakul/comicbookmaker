@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:path/path.dart';
 import 'package:projectX/components/dynamic-layout/dynamic-layout-item.dart';
 import 'package:projectX/components/dynamic-layout/dynamic-layout.dart';
-import 'dart:async';
-
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ComicBook extends StatefulWidget {
   ComicBook({Key key, this.title}) : super(key: key);
@@ -23,9 +19,6 @@ class _ComicBookState extends State<ComicBook>
     with SingleTickerProviderStateMixin {
   var _bottomNavIndex = 0; //default index of first screen
 
-  AnimationController _animationController;
-  Animation<double> animation;
-  CurvedAnimation curve;
   int currentPageIndex = 0;
   final iconList = <IconData>[
     Icons.arrow_back,
@@ -41,34 +34,11 @@ class _ComicBookState extends State<ComicBook>
       systemNavigationBarIconBrightness: Brightness.light,
     );
     SystemChrome.setSystemUIOverlayStyle(systemTheme);
-
-    _animationController = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    );
-    curve = CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(
-        0.5,
-        1.0,
-        curve: Curves.fastOutSlowIn,
-      ),
-    );
-    animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(curve);
-
-    Future.delayed(
-      Duration(seconds: 1),
-      () => _animationController.forward(),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       appBar: AppBar(
         title: Row(children: [
           Icon(Icons.book),
@@ -83,10 +53,9 @@ class _ComicBookState extends State<ComicBook>
           },
           iconData: iconList[_bottomNavIndex],
           currentPageIndex: currentPageIndex,
-          bottomNavIndex: _bottomNavIndex),
-      floatingActionButton: ScaleTransition(
-        scale: animation,
-        child: FloatingActionButton(
+          bottomNavIndex: _bottomNavIndex
+      ),
+      floatingActionButton:  FloatingActionButton(
           elevation: 8,
           backgroundColor: HexColor('#FFA400'),
           child: Icon(
@@ -98,34 +67,8 @@ class _ComicBookState extends State<ComicBook>
               print('NEW PAGE');
               currentPageIndex += 1;
             });
-            _animationController.reset();
-            _animationController.forward();
           },
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-          icons: iconList,
-          backgroundColor: HexColor('#373036'),
-          activeIndex: _bottomNavIndex,
-          activeColor: HexColor('#FFA400'),
-          splashColor: HexColor('#FFA400'),
-          inactiveColor: Colors.white,
-          notchAndCornersAnimation: animation,
-          splashSpeedInMilliseconds: 300,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          gapLocation: GapLocation.center,
-          leftCornerRadius: 0,
-          rightCornerRadius: 0,
-          onTap: (index) {
-            print('on tap' + _bottomNavIndex.toString());
-            setState(() {
-              print(_bottomNavIndex);
-              _bottomNavIndex = index;
-              if (index == 0 && currentPageIndex>0) currentPageIndex -= 1;
-              else if (index == 1) currentPageIndex += 1;
-            });
-          }),
     );
   }
 }
@@ -153,29 +96,31 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   int currentPageIndex;
   List<DynamicLayout> pages = List<DynamicLayout>();
   DynamicLayout currentPage;
+  final _pageController = PageController(viewportFraction: 0.8);
+
   @override
   void didUpdateWidget(ComicBookNavigation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.iconData != widget.iconData) {
       print(oldWidget.iconData);
       print(oldWidget.iconData);
-      _startAnimation();
     }
     if (oldWidget.currentPageIndex != widget.currentPageIndex) {
       setState(() {
         if (pages.length <= currentPageIndex + 1) {
           currentPageIndex += 1;
           pages.add(new DynamicLayout(
-            grid:new StaggeredGridView.countBuilder(
-                key:new GlobalKey(),
-                crossAxisCount: 4,
-                itemCount: 8,
-                itemBuilder: (BuildContext context, int index) => new DynamicLayoutItem(),
-                staggeredTileBuilder: (int index) =>
-                    new StaggeredTile.count(2, index.isEven ? 2 : 1),
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-              ),
+            grid: new StaggeredGridView.countBuilder(
+              key: new GlobalKey(),
+              crossAxisCount: 4,
+              itemCount: 8,
+              itemBuilder: (BuildContext context, int index) =>
+                  new DynamicLayoutItem(),
+              staggeredTileBuilder: (int index) =>
+                  new StaggeredTile.count(2, index.isEven ? 2 : 1),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+            ),
             pageNumber: currentPageIndex,
           ));
         }
@@ -189,28 +134,20 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   void initState() {
     pages.add(new DynamicLayout(
       grid: new StaggeredGridView.countBuilder(
-                key:new GlobalKey(),
-                crossAxisCount: 4,
-                itemCount: 8,
-                itemBuilder: (BuildContext context, int index) => new DynamicLayoutItem(),
-                staggeredTileBuilder: (int index) =>
-                    new StaggeredTile.count(2, index.isEven ? 2 : 1),
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-              ),
+        key: new GlobalKey(),
+        crossAxisCount: 4,
+        itemCount: 8,
+        itemBuilder: (BuildContext context, int index) =>
+            new DynamicLayoutItem(),
+        staggeredTileBuilder: (int index) =>
+            new StaggeredTile.count(2, index.isEven ? 2 : 1),
+        mainAxisSpacing: 4.0,
+        crossAxisSpacing: 4.0,
+      ),
       pageNumber: 0,
     ));
     currentPageIndex = widget.currentPageIndex;
     currentPage = pages[widget.currentPageIndex];
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1000),
-    );
-    animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
-    _controller.forward();
     super.initState();
   }
 
@@ -218,19 +155,6 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   void didChangeDependencies() {
 //    currentPage = widget.currentPage;
     super.didChangeDependencies();
-  }
-
-  _startAnimation() {
-    print('start animation');
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1000),
-    );
-    animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
-    _controller.forward();
   }
 
   @override
@@ -243,14 +167,30 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   Widget build(BuildContext context) {
     print('rebuild****');
     return Container(
-      width: double.infinity,
-      height: double.infinity,
-      padding: EdgeInsets.only(bottom: 100),
-      color: Colors.white,
-      child: Center(
-        child: currentPage,
-      ),
-    );
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.white,
+        child: Center(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+            Container(
+              height:MediaQuery.of(context).size.height*0.8,
+              child:PageView(controller: _pageController, children: pages)),
+            Container(
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: pages.length,
+                  effect: ScrollingDotsEffect(
+                    activeStrokeWidth: 2.6,
+                    activeDotScale: .4,
+                    radius: 8,
+                    spacing: 10,
+                  ),
+                )),
+        ]))));
   }
 }
 

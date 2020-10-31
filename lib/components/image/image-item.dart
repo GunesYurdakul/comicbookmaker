@@ -7,6 +7,9 @@ import '../image-editor/image_editor_pro.dart';
 
 class ImageItem extends StatefulWidget {
   ImageItem({Key key, this.title}) : super(key: key);
+  Map<int, Widget> stickerWidgets = new Map<int, Widget>();
+  Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
+
   final String title;
   @override
   _ImageItemState createState() => _ImageItemState();
@@ -24,11 +27,17 @@ class _ImageItemState extends State<ImageItem>
   @override
   void initState() {
     print('init state***-***');
-    stickerWidgets = new Map<int, Widget>();
-    bubbleWidgets = new Map<int, Widget>();
+    stickerWidgets = widget.stickerWidgets;
+    bubbleWidgets = widget.bubbleWidgets;
     super.initState();
   }
-
+  @override
+  void didUpdateWidget(covariant ImageItem oldWidget) {
+    // TODO: implement didUpdateWidget
+    stickerWidgets = widget.stickerWidgets;
+    bubbleWidgets = widget.bubbleWidgets;
+    super.didUpdateWidget(oldWidget);
+  }
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -55,8 +64,8 @@ class _ImageItemState extends State<ImageItem>
                             bubbleWidgets: bubbleWidgets,
                             image: _backgroundImage,
                             saveState: (stickers, bubbles, image) {
-                              stickerWidgets = stickers;
-                              bubbleWidgets = bubbles;
+                              widget.stickerWidgets = stickers;
+                              widget.bubbleWidgets = bubbles;
                               _backgroundImage = image;
                             },
                           )));

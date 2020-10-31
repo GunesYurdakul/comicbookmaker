@@ -4,7 +4,7 @@ import 'package:projectX/components/dynamic-layout/dynamic-layout-item.dart';
 
 class DynamicLayout extends StatefulWidget {
   final int pageNumber;
-  final StaggeredGridView grid;
+  StaggeredGridView grid;
 
   DynamicLayout({Key key, this.pageNumber, this.grid}) : super(key: key);
   @override
@@ -19,6 +19,13 @@ class _DynamicLayoutState extends State<DynamicLayout> {
     grid = widget.grid;
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.grid = grid;
+    super.dispose();
   }
 
   @override
