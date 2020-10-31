@@ -22,7 +22,7 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return new Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: InkWell(child: new ImageItem()));

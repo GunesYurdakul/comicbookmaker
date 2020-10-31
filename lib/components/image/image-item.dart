@@ -16,21 +16,22 @@ class _ImageItemState extends State<ImageItem>
     with SingleTickerProviderStateMixin {
   File _image; //image to load
   File _backgroundImage; //image to load
-  String _key;
-  Map<int, Widget> stickerWidgets = new Map<int, Widget>();
-  Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
+  Map<int, Widget> stickerWidgets;
+  Map<int, Widget> bubbleWidgets;
 
   //List<Sticker> stickers;
   //List<SpeechBubble> speech bubbles;
   @override
   void initState() {
-    _key = "hh";
+    print('init state***-***');
+    stickerWidgets = new Map<int, Widget>();
+    bubbleWidgets = new Map<int, Widget>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return new Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         color: Colors.black,
