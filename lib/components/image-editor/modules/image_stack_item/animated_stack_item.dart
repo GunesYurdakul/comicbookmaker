@@ -139,7 +139,9 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         ? Container(
             width: width * scaleFactor / 2,
             height: height * scaleFactor / 3,
-            child: EditText()):Container();
+            child: EditText(
+              scaleFactor: scaleFactor
+            )):Container();
   }
 
 }
