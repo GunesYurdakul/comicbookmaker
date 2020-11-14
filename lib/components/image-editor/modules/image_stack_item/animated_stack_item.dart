@@ -5,6 +5,8 @@ import 'dart:math';
 import 'package:screenshot/screenshot.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
+import 'edit_text.dart';
+
 class AnimatedStackItem extends StatefulWidget {
   final double left;
   final double top;
@@ -97,8 +99,8 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
                           height: height * scaleFactor,
                         )),
                         getTextBox()
-                      ] +
-                      colorFormatEditingWidgets())),
+                      ]
+                  )),
           onScaleStart: (details) {
             _baseScaleFactor = scaleFactor;
             lastPosition = details.localFocalPoint;
@@ -137,75 +139,7 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         ? Container(
             width: width * scaleFactor / 2,
             height: height * scaleFactor / 3,
-            child: KeyboardActions(
-                // tapOutsideToDismiss: true, //simdilik false cünkü dışarı tıklayıncaki eventi yakalayıp isediting false yapamadım
-                config: KeyboardActionsConfig(
-                  keyboardBarColor: Color.fromARGB(120, 0, 0, 0),
-                  actions: [
-                    KeyboardActionsItem(
-                      focusNode: _focusNodeName,
-                      onTapAction: () => {_isEditingText = false},
-                    ),
-                  ],
-                ),
-                child: _editTitleTextField()),
-          )
-        : Container();
+            child: EditText()):Container();
   }
 
-  Widget _editTitleTextField() {
-    if (_isEditingText)
-      return Center(
-        child: TextField(
-          decoration: InputDecoration(
-            border: InputBorder.none,
-          ),
-          focusNode: _focusNodeName,
-          style: TextStyle(
-              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
-          enableSuggestions: true,
-          keyboardType: TextInputType.multiline,
-          minLines: 1, //Normal textInputField will be displayed
-          maxLines: 5, // when
-          onChanged: (newValue) {
-            _focusNodeName.requestFocus();
-            setState(() {
-              text = newValue;
-            });
-          },
-          autofocus: true,
-          controller: _editingController,
-        ),
-      );
-    return InkWell(
-        onTap: () {
-          setState(() {
-            _isEditingText = true;
-          });
-        },
-        child: Text(
-          text,
-          style: TextStyle(
-              color: _textColor, fontSize: _fontSize, fontFamily: 'AdemWarren'),
-        ));
-  }
-
-  List<Widget> colorFormatEditingWidgets() {
-    if (_isEditingText)
-      return [
-        Positioned(
-          right: 0,
-          top: 0,
-          width: 50,
-          height: 50,
-          child: Icon(
-            Icons.cancel,
-            color: Colors.black,
-          ),
-        )
-      ];
-    else {
-      return [Container()];
-    }
-  }
 }
