@@ -36,12 +36,12 @@ class _DynamicLayoutState extends State<DynamicLayout> {
           children: [
             new StaggeredGridView.countBuilder(
                 key: new GlobalKey(),
-                crossAxisCount: 4,
-                itemCount: 8,
+                crossAxisCount: 1,
+                itemCount: 1,
                 itemBuilder: (BuildContext context, int index) =>
                     new DynamicLayoutItem(),
                 staggeredTileBuilder: (int index) =>
-                    new StaggeredTile.count(2, index.isEven ? 3 : 1),
+                    new StaggeredTile.fit(1),
                 mainAxisSpacing: 5.0,
                 crossAxisSpacing: 5.0,
               ),
@@ -52,7 +52,7 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                     width: 30,
                     height: 30,
                     child: Center(
-                      child:Text(widget.pageNumber.toString(),
+                      child:Text((widget.pageNumber+1).toString(),
                       style: TextStyle(
                         color:Colors.black,
                         fontFamily: 'AdemWarren',

@@ -43,25 +43,37 @@ class _ComicBookState extends State<ComicBook>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextFormField(
-          readOnly: readOnly,
-          initialValue: 'My ComicBook',
-          style: TextStyle(color: Colors.white, fontSize: 22),
-          decoration: InputDecoration(border: InputBorder.none),
-          onChanged: (text) {
-            title = text;
-          },
-        ),
-        actions: [
-          IconButton(
+        title: Row(
+          children: [
+            Expanded(
+              flex:10,
+              child:TextFormField(
+                readOnly: readOnly,
+                initialValue: 'My ComicBook',
+                style: TextStyle(color: Colors.white, fontSize: 22),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  prefix: IconButton(
               icon: Icon(Icons.edit),
               onPressed: () {
                 setState(() {
                   readOnly = !readOnly;
                 });
+              })
+                ),
+                onChanged: (text) {
+                  title = text;
+                },
+          )),]),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                setState(() {
+                });
               }),
         ],
-        backgroundColor: Colors.indigo[200],
+        backgroundColor: Colors.red,
       ),
       body: ComicBookNavigation(
         changeCurrentPageIndex: (navIndex) {
@@ -72,7 +84,7 @@ class _ComicBookState extends State<ComicBook>
         bottomNavIndex: _bottomNavIndex),
       floatingActionButton: FloatingActionButton(
         elevation: 8,
-        backgroundColor: Colors.cyan[200],
+        backgroundColor: Colors.blue,
         child: Icon(
           Icons.add,
           color: HexColor('#373A36'),
@@ -163,13 +175,18 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
     return Container(
         child: Column(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: PageView(
-                  controller: _pageController, 
-                  children: pages)),
-              Container(
+              Expanded(
+                flex:10,
+                child:Container(
+                  padding: EdgeInsets.only(top:MediaQuery.of(context).size.width/30),
+                  width: MediaQuery.of(context).size.width,
+                  height: (MediaQuery.of(context).size.width/210)*297,// A4 paper ratios
+                  child: PageView(
+                    controller: _pageController, 
+                    children: pages))),
+              Expanded(
+                flex:1,
+                child:Container(
                   child: SmoothPageIndicator(
                 controller: _pageController,
                 count: pages.length,
@@ -178,7 +195,7 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
                   activeDotScale: .4,
                   radius: 8,
                   spacing: 10,
-                ),
+                  )),
               )),
                     ]));
   }

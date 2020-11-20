@@ -97,6 +97,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     print('DISPOSE');
     super.dispose();
     timeprediction.cancel();
+    _controller.clear();
   }
 
   @override
@@ -138,7 +139,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   });
                 }),
           ],
-          backgroundColor: Colors.redAccent[700],
+          backgroundColor: Colors.red,
         ),
         body: Center(
           child: Screenshot(
@@ -212,7 +213,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             : Container(
                 child: CurvedNavigationBar(
                   animationDuration: Duration(milliseconds: 200),
-                  backgroundColor: Colors.redAccent[700],
+                  backgroundColor: Colors.red,
                   items: <Widget>[
                     Icon(Icons.chat_bubble_outline, size: 30),
                     Icon(Icons.filter_frames, size: 30),
