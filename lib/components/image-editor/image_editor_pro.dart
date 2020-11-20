@@ -5,6 +5,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
 import './modules/image_stack_item/sticker_chooser/sticker.dart';
@@ -35,7 +36,8 @@ class ImageEditorPro extends StatefulWidget {
   final Map<int, Widget> stickerWidgets;
   final Map<int, Widget> bubbleWidgets;
   final File image;
-  final void Function(Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image)
+  final void Function(
+          Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image)
       saveState;
   ImageEditorPro(
       {this.width,
@@ -136,7 +138,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   });
                 }),
           ],
-          backgroundColor: Colors.pink,
+          backgroundColor: Colors.redAccent[700],
         ),
         body: Center(
           child: Screenshot(
@@ -158,6 +160,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               fit: BoxFit.cover,
                             )
                           : Container(),
+                      Container(
+                        child: GestureDetector(
+                            onPanUpdate: (DragUpdateDetails details) {
+                              setState(() {
+                                RenderBox object = context.findRenderObject();
+                                Offset _localPosition = object
+                                    .globalToLocal(details.globalPosition);
+                                _points = new List.from(_points)
+                                  ..add(_localPosition);
+                              });
+                            },
+                            onPanEnd: (DragEndDetails details) {
+                              _points.add(null);
+                            },
+                            child: Signat()),
+                      ),
                       Stack(
                         children: stickerWidgets.values
                             .toList()
@@ -194,11 +212,12 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             : Container(
                 child: CurvedNavigationBar(
                   animationDuration: Duration(milliseconds: 200),
-                  backgroundColor: Colors.pinkAccent[700],
+                  backgroundColor: Colors.redAccent[700],
                   items: <Widget>[
                     Icon(Icons.chat_bubble_outline, size: 30),
                     Icon(Icons.filter_frames, size: 30),
                     Icon(Icons.gesture, size: 30),
+                    FaIcon(FontAwesomeIcons.eraser, size: 25),
                   ],
                   onTap: (index) {
                     switch (index) {
@@ -254,6 +273,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       case 2:
                         brush();
                         break;
+                      case 3:
+                        _controller.clear();
+                        type.clear();
+                        break;
                       default:
                         print(index);
                     }
@@ -264,7 +287,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   toggleTrashBin(bool value) {
     print(this.mounted);
-    if(this.mounted)
+    if (this.mounted)
       setState(() {
         moving = value;
       });

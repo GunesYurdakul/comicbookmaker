@@ -16,8 +16,11 @@ class _StickersState extends State<Stickers> {
           if (snapshot.data != null) {
             return Container(
                 height: 400,
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
                 ]),
                 child: Column(
                   children: <Widget>[

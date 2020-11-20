@@ -16,7 +16,10 @@ class _SpeechBubblesState extends State<SpeechBubbles> {
           if (snapshot.data != null) {
             return Container(
                 height: 300,
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
                   BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
                 ]),
                 child: Column(

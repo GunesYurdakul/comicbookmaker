@@ -226,13 +226,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.17"
-  image_editor:
-    dependency: "direct main"
-    description:
-      name: image_editor
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.2"
   image_editor_pro:
     dependency: "direct main"
     description:
