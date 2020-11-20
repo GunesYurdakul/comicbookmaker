@@ -69,13 +69,13 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
   @override
   void dispose() {
     widget.saveState({
-      'position' : position,
-      'lastPosition' : lastPosition,
-      'offset' : offset,
-      'width' : width,
-      'height' : height,
-      'scaleFactor' : scaleFactor,
-      'rotation' : rotation,
+      'position': position,
+      'lastPosition': lastPosition,
+      'offset': offset,
+      'width': width,
+      'height': height,
+      'scaleFactor': scaleFactor,
+      'rotation': rotation,
     });
     _editingController.dispose();
     super.dispose();
@@ -89,18 +89,15 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         child: GestureDetector(
           child: Transform.rotate(
               angle: (pi / 180) * rotation,
-              child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                        Container(
-                            child: Image(
-                          image: AssetImage(widget.imagePath),
-                          width: width * scaleFactor,
-                          height: height * scaleFactor,
-                        )),
-                        getTextBox()
-                      ]
-                  )),
+              child: Stack(alignment: Alignment.center, children: <Widget>[
+                Container(
+                    child: Image(
+                  image: AssetImage(widget.imagePath),
+                  width: width * scaleFactor,
+                  height: height * scaleFactor,
+                )),
+                getTextBox()
+              ])),
           onScaleStart: (details) {
             _baseScaleFactor = scaleFactor;
             lastPosition = details.localFocalPoint;
@@ -115,14 +112,20 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
               rotation += details.rotation;
               lastPosition = details.localFocalPoint;
             });
-            if (offset.dy < 5) {
+            print('dx' + offset.dx.toString());
+            print('width'+(MediaQuery.of(context).size.width / 4).toString());
+            if (offset.dy < 5 &&
+                offset.dx < (MediaQuery.of(context).size.width / 4) + 30 &&
+                offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
               scaleFactor /= 3;
             }
           },
           onScaleEnd: (endDetails) {
-            if (offset.dy < 5) {
+            print(offset);
+            if (offset.dy < 5 &&
+                offset.dx < (MediaQuery.of(context).size.width / 4) + 30 &&
+                offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
               widget.onDelete();
-              scaleFactor /= 3;
             }
             print('stop moving **');
             widget.onStopMoving(widget.state);
@@ -139,9 +142,7 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         ? Container(
             width: width * scaleFactor / 2,
             height: height * scaleFactor / 3,
-            child: EditText(
-              scaleFactor: scaleFactor
-            )):Container();
+            child: EditText(scaleFactor: scaleFactor))
+        : Container();
   }
-
 }

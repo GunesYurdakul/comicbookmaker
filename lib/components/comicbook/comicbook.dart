@@ -18,8 +18,9 @@ class ComicBook extends StatefulWidget {
 class _ComicBookState extends State<ComicBook>
     with SingleTickerProviderStateMixin {
   var _bottomNavIndex = 0; //default index of first screen
-
+  bool readOnly;
   int currentPageIndex = 0;
+  String title;
   final iconList = <IconData>[
     Icons.arrow_back,
     Icons.arrow_forward,
@@ -28,6 +29,8 @@ class _ComicBookState extends State<ComicBook>
   @override
   void initState() {
     super.initState();
+    title = widget.title;
+    readOnly = true;
     currentPageIndex = 0;
     final systemTheme = SystemUiOverlayStyle.light.copyWith(
       systemNavigationBarColor: HexColor('#373A36'),
@@ -40,35 +43,47 @@ class _ComicBookState extends State<ComicBook>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [
-          Icon(Icons.book),
-          Spacer(),
-          Icon(Icons.monetization_on_rounded)
-        ]),
-        backgroundColor: HexColor('#373036'),
-      ),
-      body: ComicBookNavigation(
-          changeCurrentPageIndex: (navIndex) {
-            this.currentPageIndex += navIndex;
-          },
-          iconData: iconList[_bottomNavIndex],
-          currentPageIndex: currentPageIndex,
-          bottomNavIndex: _bottomNavIndex
-      ),
-      floatingActionButton:  FloatingActionButton(
-          elevation: 8,
-          backgroundColor: HexColor('#FFA400'),
-          child: Icon(
-            Icons.add,
-            color: HexColor('#373A36'),
-          ),
-          onPressed: () {
-            setState(() {
-              print('NEW PAGE');
-              currentPageIndex += 1;
-            });
+        title: TextFormField(
+          readOnly: readOnly,
+          initialValue: 'My ComicBook',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+          decoration: InputDecoration(border: InputBorder.none),
+          onChanged: (text) {
+            title = text;
           },
         ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                setState(() {
+                  readOnly = !readOnly;
+                });
+              }),
+        ],
+        backgroundColor: Colors.indigo[200],
+      ),
+      body: ComicBookNavigation(
+        changeCurrentPageIndex: (navIndex) {
+          this.currentPageIndex += navIndex;
+        },
+        iconData: iconList[_bottomNavIndex],
+        currentPageIndex: currentPageIndex,
+        bottomNavIndex: _bottomNavIndex),
+      floatingActionButton: FloatingActionButton(
+        elevation: 8,
+        backgroundColor: Colors.cyan[200],
+        child: Icon(
+          Icons.add,
+          color: HexColor('#373A36'),
+        ),
+        onPressed: () {
+          setState(() {
+            print('NEW PAGE');
+            currentPageIndex += 1;
+          });
+        },
+      ),
     );
   }
 }
@@ -96,7 +111,7 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   int currentPageIndex;
   List<DynamicLayout> pages = List<DynamicLayout>();
   DynamicLayout currentPage;
-  final _pageController = PageController(viewportFraction: 0.8);
+  final _pageController = PageController(viewportFraction: 0.9);
 
   @override
   void didUpdateWidget(ComicBookNavigation oldWidget) {
@@ -109,19 +124,9 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
       setState(() {
         if (pages.length <= currentPageIndex + 1) {
           currentPageIndex += 1;
-          pages.add(new DynamicLayout(
-            grid: new StaggeredGridView.countBuilder(
-              key: new GlobalKey(),
-              crossAxisCount: 4,
-              itemCount: 8,
-              itemBuilder: (BuildContext context, int index) =>
-                  new DynamicLayoutItem(),
-              staggeredTileBuilder: (int index) =>
-                  new StaggeredTile.count(2, index.isEven ? 2 : 1),
-              mainAxisSpacing: 4.0,
-              crossAxisSpacing: 4.0,
-            ),
-            pageNumber: currentPageIndex,
+          pages.add(
+            new DynamicLayout(
+              pageNumber: currentPageIndex,
           ));
         }
         currentPageIndex = widget.currentPageIndex;
@@ -133,17 +138,6 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   @override
   void initState() {
     pages.add(new DynamicLayout(
-      grid: new StaggeredGridView.countBuilder(
-        key: new GlobalKey(),
-        crossAxisCount: 4,
-        itemCount: 8,
-        itemBuilder: (BuildContext context, int index) =>
-            new DynamicLayoutItem(),
-        staggeredTileBuilder: (int index) =>
-            new StaggeredTile.count(2, index.isEven ? 2 : 1),
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-      ),
       pageNumber: 0,
     ));
     currentPageIndex = widget.currentPageIndex;
@@ -167,30 +161,26 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   Widget build(BuildContext context) {
     print('rebuild****');
     return Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.white,
-        child: Center(
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
             children: [
-            Container(
-              height:MediaQuery.of(context).size.height*0.8,
-              child:PageView(controller: _pageController, children: pages)),
-            Container(
-                child: SmoothPageIndicator(
-                  controller: _pageController,
-                  count: pages.length,
-                  effect: ScrollingDotsEffect(
-                    activeStrokeWidth: 2.6,
-                    activeDotScale: .4,
-                    radius: 8,
-                    spacing: 10,
-                  ),
-                )),
-        ]))));
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: PageView(
+                  controller: _pageController, 
+                  children: pages)),
+              Container(
+                  child: SmoothPageIndicator(
+                controller: _pageController,
+                count: pages.length,
+                effect: ScrollingDotsEffect(
+                  activeStrokeWidth: 2.6,
+                  activeDotScale: .4,
+                  radius: 8,
+                  spacing: 10,
+                ),
+              )),
+                    ]));
   }
 }
 
@@ -205,4 +195,3 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
- 

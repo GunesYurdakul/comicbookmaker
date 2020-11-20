@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:projectX/components/dynamic-layout/dynamic-layout-item.dart';
+
+import 'dynamic-layout-item.dart';
 
 class DynamicLayout extends StatefulWidget {
   final int pageNumber;
-  StaggeredGridView grid;
+  final StaggeredGridView grid;
 
   DynamicLayout({Key key, this.pageNumber, this.grid}) : super(key: key);
   @override
@@ -24,7 +25,6 @@ class _DynamicLayoutState extends State<DynamicLayout> {
   @override
   void dispose() {
     // TODO: implement dispose
-    widget.grid = grid;
     super.dispose();
   }
 
@@ -32,16 +32,37 @@ class _DynamicLayoutState extends State<DynamicLayout> {
   Widget build(BuildContext context) {
     print('layout rebuild');
     return Scaffold(
-        bottomNavigationBar: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width / 40),
-                  child: Text(widget.pageNumber.toString(),
-                      style: TextStyle(fontFamily: 'AdemWarren')))
-            ]),
-        body: widget.grid);
+        body: Stack(
+          children: [
+            new StaggeredGridView.countBuilder(
+                key: new GlobalKey(),
+                crossAxisCount: 4,
+                itemCount: 8,
+                itemBuilder: (BuildContext context, int index) =>
+                    new DynamicLayoutItem(),
+                staggeredTileBuilder: (int index) =>
+                    new StaggeredTile.count(2, index.isEven ? 3 : 1),
+                mainAxisSpacing: 5.0,
+                crossAxisSpacing: 5.0,
+              ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child:Container(
+                    width: 30,
+                    height: 30,
+                    child: Center(
+                      child:Text(widget.pageNumber.toString(),
+                      style: TextStyle(
+                        color:Colors.black,
+                        fontFamily: 'AdemWarren',
+                        fontSize: 20),)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color:Colors.black,width:3),
+                        shape: BoxShape.rectangle,
+                        color: Colors.white
+                  )))
+        ]
+        ));
   }
 }

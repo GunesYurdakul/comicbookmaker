@@ -4,6 +4,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:projectX/components/comicbook-library/comicbook_library.dart';
 import 'package:projectX/components/comicbook/comicbook.dart';
 class MyHomePage extends StatefulWidget {
   @override
@@ -13,6 +14,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return ComicBook(title:'ComicBook');
+    return ComicBookLibrary();
   }
 }
