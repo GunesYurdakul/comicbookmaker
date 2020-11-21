@@ -19,10 +19,12 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('comicsy'),
+        backgroundColor: Colors.white,
+        title: Image(image:AssetImage('assets/comicsy_logo.png'),width: MediaQuery.of(context).size.width/2,),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+        backgroundColor: Color(0xff0060AA),
         onPressed: () {
           _comicBooks.add(ComicBook());
           Navigator.push(context,

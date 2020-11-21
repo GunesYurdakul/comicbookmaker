@@ -73,7 +73,6 @@ class _ComicBookState extends State<ComicBook>
                 });
               }),
         ],
-        backgroundColor: Colors.red,
       ),
       body: ComicBookNavigation(
         changeCurrentPageIndex: (navIndex) {
@@ -84,10 +83,9 @@ class _ComicBookState extends State<ComicBook>
         bottomNavIndex: _bottomNavIndex),
       floatingActionButton: FloatingActionButton(
         elevation: 8,
-        backgroundColor: Colors.blue,
         child: Icon(
           Icons.add,
-          color: HexColor('#373A36'),
+          color: Colors.white,
         ),
         onPressed: () {
           setState(() {

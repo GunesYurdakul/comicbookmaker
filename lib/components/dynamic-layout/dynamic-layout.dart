@@ -34,17 +34,19 @@ class _DynamicLayoutState extends State<DynamicLayout> {
     return Scaffold(
         body: Stack(
           children: [
-            new StaggeredGridView.countBuilder(
+            //draw line methoduyla çizgiler çekecem ona göre bölecem
+            DynamicLayoutItem(),
+            /* new StaggeredGridView.countBuilder(
                 key: new GlobalKey(),
-                crossAxisCount: 1,
-                itemCount: 1,
+                crossAxisCount: 4,
+                itemCount: 8,
                 itemBuilder: (BuildContext context, int index) =>
                     new DynamicLayoutItem(),
                 staggeredTileBuilder: (int index) =>
-                    new StaggeredTile.fit(1),
+                    new StaggeredTile.count(2, index.isEven ? 1 : 3),
                 mainAxisSpacing: 5.0,
                 crossAxisSpacing: 5.0,
-              ),
+            ), */  
             Positioned(
               right: 0,
               bottom: 0,

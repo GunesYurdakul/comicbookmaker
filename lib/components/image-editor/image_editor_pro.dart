@@ -139,7 +139,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   });
                 }),
           ],
-          backgroundColor: Colors.red,
         ),
         body: Center(
           child: Screenshot(
@@ -213,7 +212,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             : Container(
                 child: CurvedNavigationBar(
                   animationDuration: Duration(milliseconds: 200),
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.transparent,
                   items: <Widget>[
                     Icon(Icons.chat_bubble_outline, size: 30),
                     Icon(Icons.filter_frames, size: 30),

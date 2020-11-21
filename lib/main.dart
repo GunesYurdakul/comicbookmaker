@@ -12,8 +12,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ComicBookMaker',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(color: Color(0xffC52F43)),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Color(0xff0060AA)),
         fontFamily: 'AdemWarren',
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),
