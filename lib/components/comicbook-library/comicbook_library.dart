@@ -18,6 +18,7 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Image(image:AssetImage('assets/comicsy_logo.png'),width: MediaQuery.of(context).size.width/3,),

@@ -5,19 +5,22 @@ import 'dynamic-layout-item.dart';
 
 class DynamicLayout extends StatefulWidget {
   final int pageNumber;
-  final StaggeredGridView grid;
 
-  DynamicLayout({Key key, this.pageNumber, this.grid}) : super(key: key);
+  DynamicLayout({Key key, this.pageNumber}) : super(key: key);
   @override
   _DynamicLayoutState createState() => _DynamicLayoutState();
 }
 
 class _DynamicLayoutState extends State<DynamicLayout> {
-  StaggeredGridView grid;
+  int numRows;
+  int numCols;
+  List<int> flexValues;
   @override
   void initState() {
+    numRows = 3;
+    numCols = 4;
+    flexValues = List<int>.filled(numRows * numCols, 1);
     print('INIT LAYOUT');
-    grid = widget.grid;
     // TODO: implement initState
     super.initState();
   }
@@ -30,41 +33,64 @@ class _DynamicLayoutState extends State<DynamicLayout> {
 
   @override
   Widget build(BuildContext context) {
-    print('layout rebuild');
     return Scaffold(
-        body: Stack(
-          children: [
-            //draw line methoduyla çizgiler çekecem ona göre bölecem
-            DynamicLayoutItem(),
-            /* new StaggeredGridView.countBuilder(
-                key: new GlobalKey(),
-                crossAxisCount: 4,
-                itemCount: 8,
-                itemBuilder: (BuildContext context, int index) =>
-                    new DynamicLayoutItem(),
-                staggeredTileBuilder: (int index) =>
-                    new StaggeredTile.count(2, index.isEven ? 1 : 3),
-                mainAxisSpacing: 5.0,
-                crossAxisSpacing: 5.0,
-            ), */  
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child:Container(
-                    width: 30,
-                    height: 30,
-                    child: Center(
-                      child:Text((widget.pageNumber+1).toString(),
-                      style: TextStyle(
-                        color:Colors.black,
-                        fontFamily: 'AdemWarren',
-                        fontSize: 20),)),
-                    decoration: BoxDecoration(
-                      border: Border.all(color:Colors.black,width:3),
-                        shape: BoxShape.rectangle,
-                        color: Colors.white
-                  )))
-        ]
-        ));
+      resizeToAvoidBottomInset:false,
+        body: Stack(children: [
+      Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 3)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: List.generate(
+                numCols,
+                (indexRow) => Expanded(
+                    flex: flexValues[indexRow],
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: List.generate(
+                            numRows,
+                            (indexCol) => Expanded(
+                                flex: flexValues[indexCol],
+                                child: Container(
+                                  child: DynamicLayoutItem(),
+                                  margin: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.black, width: 3)),
+                                  width: ((MediaQuery.of(context).size.width -
+                                              5 * (numCols * 2 + 2)) /
+                                          numCols)
+                                      .floor()
+                                      .toDouble(),
+                                  height: (((MediaQuery.of(context).size.width /
+                                                      210) *
+                                                  297 -
+                                              5 * (numRows * 2 + 2)) /
+                                          numRows)
+                                      .floor()
+                                      .toDouble(),
+                                )))))),
+          )),
+      Positioned(
+          right: 0,
+          bottom: 0,
+          child: Container(
+              width: 30,
+              height: 30,
+              child: Center(
+                  child: Text(
+                (widget.pageNumber + 1).toString(),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'AdemWarren',
+                    fontSize: 20),
+              )),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 3),
+                  shape: BoxShape.rectangle,
+                  color: Colors.white)))
+    ]));
   }
 }

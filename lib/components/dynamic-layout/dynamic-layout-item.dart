@@ -22,10 +22,7 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-        height: MediaQuery.of(context).size.height*0.8,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
+    return Stack(
           children: [
             new ImageItem(),
             Center(
@@ -37,7 +34,6 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
                 color:Colors.white,
               )),
           ]
-          )
         );
   }
 }
