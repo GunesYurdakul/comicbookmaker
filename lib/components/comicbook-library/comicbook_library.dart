@@ -20,7 +20,7 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Image(image:AssetImage('assets/comicsy_logo.png'),width: MediaQuery.of(context).size.width/2,),
+        title: Image(image:AssetImage('assets/comicsy_logo.png'),width: MediaQuery.of(context).size.width/3,),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

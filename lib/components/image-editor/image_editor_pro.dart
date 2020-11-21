@@ -118,12 +118,12 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         appBar: new AppBar(
           actions: <Widget>[
             new IconButton(
-                icon: Icon(Icons.add_a_photo, color: Colors.black),
+                icon: Icon(Icons.add_a_photo, color: Colors.white),
                 onPressed: () {
                   bottomsheets();
                 }),
             new IconButton(
-                icon: Icon(Icons.check, color: Colors.black),
+                icon: Icon(Icons.check, color: Colors.white),
                 onPressed: () {
                   _imageFile = null;
                   screenshotController
