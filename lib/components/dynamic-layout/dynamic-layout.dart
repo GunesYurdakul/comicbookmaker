@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
+import 'package:projectX/session.dart';
 
 import 'dynamic-layout-item.dart';
 
 class DynamicLayout extends StatefulWidget {
   final int pageNumber;
+  final bool isLayoutChosen;
 
-  DynamicLayout({Key key, this.pageNumber}) : super(key: key);
+  DynamicLayout({Key key, this.pageNumber, this.isLayoutChosen = false})
+      : super(key: key);
   @override
   _DynamicLayoutState createState() => _DynamicLayoutState();
 }
@@ -21,7 +25,16 @@ class _DynamicLayoutState extends State<DynamicLayout> {
 
   @override
   void initState() {
-    isLayoutChosen = false;
+    Session().addListener(() {
+      setState(() {
+        if (Session().showLayoutSelector &&
+            Session().currentPage == widget.pageNumber) {
+          isLayoutChosen = false;
+          layoutParameterSelector();
+        }
+      });
+    });
+    isLayoutChosen = widget.isLayoutChosen;
     setLayoutValues(1, 1);
     print('INIT LAYOUT');
     // TODO: implement initState
@@ -37,8 +50,17 @@ class _DynamicLayoutState extends State<DynamicLayout> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -88,18 +110,16 @@ class _DynamicLayoutState extends State<DynamicLayout> {
         context: context,
         builder: (_) => new AlertDialog(
               title: new Text("Select Layout"),
-              content: new Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              content: new Column(mainAxisSize: MainAxisSize.min, children: [
                 Row(children: [
                   Expanded(
                       child: TextFormField(
                     decoration: InputDecoration(
                         labelText: 'Rows', border: OutlineInputBorder()),
                     keyboardType: TextInputType.number,
-                    initialValue: "1",
+                    initialValue: numRows.toString(),
                     onChanged: (val) {
-                        numRows = int.parse(val);
+                      numRows = int.parse(val);
                     },
                   )),
                   SizedBox(width: 5),
@@ -108,9 +128,9 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                     decoration: InputDecoration(
                         labelText: 'Cols', border: OutlineInputBorder()),
                     keyboardType: TextInputType.number,
-                    initialValue: "1",
+                    initialValue: numCols.toString(),
                     onChanged: (val) {
-                        numCols = int.parse(val);
+                      numCols = int.parse(val);
                     },
                   )),
                 ])
@@ -121,7 +141,7 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                   onPressed: () {
                     setState(() {
                       isLayoutChosen = true;
-                      setLayoutValues(numRows, numCols);  
+                      setLayoutValues(numRows, numCols);
                     });
                     Navigator.of(context).pop();
                   },
