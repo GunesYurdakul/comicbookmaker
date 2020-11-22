@@ -25,14 +25,6 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
     return Stack(
           children: [
             new ImageItem(),
-            Center(
-              child: IconButton(
-                icon: Icon(
-                  Icons.grid_on,       
-                  size:40),
-                onPressed: (){},
-                color:Colors.white,
-              )),
           ]
         );
   }
