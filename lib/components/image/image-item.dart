@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../image-editor/image_editor_pro.dart';
 
 class ImageItem extends StatefulWidget {
-  ImageItem({Key key, this.title}) : super(key: key);
+  final double width;
+  final double height;
+  ImageItem({Key key, this.title, this.width, this.height}) : super(key: key);
   Map<int, Widget> stickerWidgets = new Map<int, Widget>();
   Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
 
@@ -31,6 +33,7 @@ class _ImageItemState extends State<ImageItem>
     bubbleWidgets = widget.bubbleWidgets;
     super.initState();
   }
+
   @override
   void didUpdateWidget(covariant ImageItem oldWidget) {
     // TODO: implement didUpdateWidget
@@ -38,11 +41,12 @@ class _ImageItemState extends State<ImageItem>
     bubbleWidgets = widget.bubbleWidgets;
     super.didUpdateWidget(oldWidget);
   }
+
   @override
   Widget build(BuildContext context) {
-    return new Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+    return Container(
+        height: widget.height,
+        width: widget.width,
         color: Colors.black,
         child: InkWell(
             child: _image != null
@@ -52,14 +56,15 @@ class _ImageItemState extends State<ImageItem>
                   )
                 : Container(),
             onTap: () async {
+              var size = getImageSize();
               _image = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => new ImageEditorPro(
                             appBarColor: Colors.transparent,
                             bottomBarColor: Colors.blue,
-                            height: height,
-                            width: width,
+                            height: size['height'],
+                            width: size['width'],
                             stickerWidgets: stickerWidgets,
                             bubbleWidgets: bubbleWidgets,
                             image: _backgroundImage,
@@ -71,6 +76,25 @@ class _ImageItemState extends State<ImageItem>
                           )));
               setState(() {});
             }));
+  }
+
+  getImageSize() {
+    var size = {};
+    if (widget.width / MediaQuery.of(context).size.width >
+        widget.height / MediaQuery.of(context).size.height) {
+      size['width'] = MediaQuery.of(context).size.width;
+      size['height'] = size['width']*(widget.height/widget.width);
+    }
+    else {
+      size['height'] = MediaQuery.of(context).size.height;
+      size['width'] = size['height']*(widget.width/widget.height);
+      if(size['width']>MediaQuery.of(context).size.width)
+      {
+        size['width'] = MediaQuery.of(context).size.width;
+        size['height'] = size['width']*(widget.height/widget.width);
+      }
+    }
+    return size;
   }
 
   askForSize() {

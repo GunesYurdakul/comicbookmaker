@@ -18,8 +18,6 @@ import 'modules/image_stack_item/sticker_chooser/stickers.dart';
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
 
-int width = 800;
-int height = 800;
 List fontsize = [];
 List multiwidget = [];
 
@@ -30,8 +28,8 @@ SignatureController _controller =
 
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
-  final int width;
-  final int height;
+  final double width;
+  final double height;
   final Color bottomBarColor;
   final Map<int, Widget> stickerWidgets;
   final Map<int, Widget> bubbleWidgets;
@@ -146,8 +144,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             child: Container(
               margin: EdgeInsets.all(20),
               color: Colors.white,
-              width: width.toDouble(),
-              height: height.toDouble(),
+              width: widget.width,
+              height: widget.height,
               child: RepaintBoundary(
                   key: globalKey,
                   child: Stack(
@@ -155,8 +153,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       _image != null
                           ? Image.file(
                               _image,
-                              height: height.toDouble(),
-                              width: width.toDouble(),
+                              height: widget.height,
+                              width: widget.width,
                               fit: BoxFit.cover,
                             )
                           : Container(),
@@ -174,7 +172,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             onPanEnd: (DragEndDetails details) {
                               _points.add(null);
                             },
-                            child: Signat()),
+                            child: Signat(
+                              width: widget.width,
+                              height: widget.height,
+                            )),
                       ),
                       Stack(
                         children: stickerWidgets.values
@@ -392,8 +393,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                             image.readAsBytesSync());
 
                                     setState(() {
-                                      height = decodedImage.height;
-                                      width = decodedImage.width;
                                       _image = image;
                                     });
                                     setState(() => _controller.clear());
@@ -421,8 +420,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                       image.readAsBytesSync());
 
                                   setState(() {
-                                    height = decodedImage.height;
-                                    width = decodedImage.width;
                                     _image = image;
                                   });
                                   setState(() => _controller.clear());
@@ -452,6 +449,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 }
 
 class Signat extends StatefulWidget {
+  final double width;
+  final double height;
+
+  const Signat({Key key, this.width, this.height}) : super(key: key);
   @override
   _SignatState createState() => _SignatState();
 }
@@ -469,8 +470,8 @@ class _SignatState extends State<Signat> {
       children: <Widget>[
         Signature(
             controller: _controller,
-            height: height.toDouble(),
-            width: width.toDouble(),
+            height: widget.height,
+            width: widget.width,
             backgroundColor: Colors.transparent),
       ],
     );

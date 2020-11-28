@@ -168,7 +168,17 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                           (indexCol) => Expanded(
                               flex: flexColValues[indexRow][indexCol],
                               child: Container(
-                                child: DynamicLayoutItem(),
+                                child: DynamicLayoutItem(
+                                  width:((MediaQuery.of(context).size.width -
+                                            5 * (numCols * 2 + 2)) *
+                                        (flexColValues[indexRow][indexCol] /
+                                            sum(flexColValues[indexRow]))) *
+                                    flexColValues[indexRow][indexCol].toDouble(),
+                                  height: (((MediaQuery.of(context).size.height -
+                                            5 * (numRows * 2 + 2)) *
+                                        (flexRowValues[indexRow] /
+                                            sum(flexRowValues)))).toDouble()
+                                  ),
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                     color: Colors.white,
