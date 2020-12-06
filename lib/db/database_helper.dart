@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "comicsy.db";
+  static final _databaseName = "comicsy_app.db";
   static final _databaseVersion = 1;
 
   static final comicbooks = 'comicbooks';
@@ -41,9 +41,39 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $comicbooks (
             comicbookId INTEGER PRIMARY KEY,
-            pageId TEXT NOT NULL,
-            stickersList INTEGER NOT NULL,
-            speechBubblesList INTEGER NOT NULL
+            pageId INTEGER NOT NULL,
+            stickersList BLOB NOT NULL,
+            speechBubblesList BLOB NOT NULL
+          )''');
+    await db.execute('''
+          CREATE TABLE $images (
+            imgId INTEGER PRIMARY KEY,
+            path TEXT NOT NULL,
+            type INTEGER NOT NULL
+          )''');
+    await db.execute('''
+          CREATE TABLE $texts (
+            textId INTEGER PRIMARY KEY,
+            text TEXT NOT NULL,
+            font TEXT NOT NULL,
+            size REAL NOT NULL
+          )''');
+    await db.execute('''
+          CREATE TABLE $stickers (
+            stickerId INTEGER PRIMARY KEY,
+            imgId INTEGER NOT NULL,
+            position REAL NOT NULL,
+            rotation REAL NOT NULL,
+            size REAL NOT NULL
+          )''');
+    await db.execute('''
+          CREATE TABLE $speechBubbles (
+            speechBubbleId INTEGER PRIMARY KEY,
+            imgId INTEGER NOT NULL,
+            position REAL NOT NULL,
+            rotation REAL NOT NULL,
+            size REAL NOT NULL,
+            textId INTEGER NOT NULL
           )
           ''');
   }
