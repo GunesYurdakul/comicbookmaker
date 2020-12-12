@@ -12,7 +12,6 @@ class Session extends ChangeNotifier {
     return _instance;
   }
   notify() {
-    print('NOTIFY');
     notifyListeners();
   }
   initDatabase()async{

@@ -13,8 +13,7 @@ class DynamicLayoutItem extends StatefulWidget {
   _DynamicLayoutItemState createState() => _DynamicLayoutItemState();
 }
 
-class _DynamicLayoutItemState extends State<DynamicLayoutItem>
-    with SingleTickerProviderStateMixin {
+class _DynamicLayoutItemState extends State<DynamicLayoutItem> with SingleTickerProviderStateMixin {
   CurvedAnimation curve;
 
   @override
@@ -24,9 +23,12 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-      Center(child:ImageItem(width: widget.width,height:widget.height,)),
+    return Stack(children: [
+      Center(
+          child: ImageItem(
+        width: widget.width,
+        height: widget.height,
+      )),
     ]);
   }
 }

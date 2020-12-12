@@ -17,8 +17,7 @@ class ImageItem extends StatefulWidget {
   _ImageItemState createState() => _ImageItemState();
 }
 
-class _ImageItemState extends State<ImageItem>
-    with SingleTickerProviderStateMixin {
+class _ImageItemState extends State<ImageItem> with SingleTickerProviderStateMixin {
   File _image; //image to load
   File _backgroundImage; //image to load
   Map<int, Widget> stickerWidgets;
@@ -80,20 +79,22 @@ class _ImageItemState extends State<ImageItem>
 
   getImageSize() {
     var size = {};
-    if (widget.width / MediaQuery.of(context).size.width >
-        widget.height / MediaQuery.of(context).size.height) {
+    print(widget.width);
+    print(widget.height);
+    if (widget.width / MediaQuery.of(context).size.width > widget.height / MediaQuery.of(context).size.height) {
+      print(1);
       size['width'] = MediaQuery.of(context).size.width;
-      size['height'] = size['width']*(widget.height/widget.width);
-    }
-    else {
+      size['height'] = size['width'] * (widget.height / widget.width);
+    } else {
+      print(2);
       size['height'] = MediaQuery.of(context).size.height;
-      size['width'] = size['height']*(widget.width/widget.height);
-      if(size['width']>MediaQuery.of(context).size.width)
-      {
+      size['width'] = size['height'] * (widget.width / widget.height);
+      if (size['width'] > MediaQuery.of(context).size.width) {
         size['width'] = MediaQuery.of(context).size.width;
-        size['height'] = size['width']*(widget.height/widget.width);
+        size['height'] = size['width'] * (widget.height / widget.width);
       }
     }
+    print(size);
     return size;
   }
 
