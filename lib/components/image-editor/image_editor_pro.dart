@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,7 @@ import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
+import 'modules/image_stack_item/filter_chooser/filters.dart';
 import 'modules/image_stack_item/speechbubble_chooser/speechbubbles.dart';
 import 'modules/image_stack_item/sticker_chooser/stickers.dart';
 
@@ -23,8 +25,7 @@ List multiwidget = [];
 
 Color currentcolors = Colors.white;
 var opicity = 0.0;
-SignatureController _controller =
-    SignatureController(penStrokeWidth: 5, penColor: Colors.green);
+SignatureController _controller = SignatureController(penStrokeWidth: 5, penColor: Colors.green);
 
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
@@ -34,18 +35,8 @@ class ImageEditorPro extends StatefulWidget {
   final Map<int, Widget> stickerWidgets;
   final Map<int, Widget> bubbleWidgets;
   final File image;
-  final void Function(
-          Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image)
-      saveState;
-  ImageEditorPro(
-      {this.width,
-      this.height,
-      this.appBarColor,
-      this.bottomBarColor,
-      this.saveState,
-      this.stickerWidgets,
-      this.bubbleWidgets,
-      this.image});
+  final void Function(Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image) saveState;
+  ImageEditorPro({this.width, this.height, this.appBarColor, this.bottomBarColor, this.saveState, this.stickerWidgets, this.bubbleWidgets, this.image});
   @override
   _ImageEditorProState createState() => _ImageEditorProState();
 }
@@ -64,8 +55,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   void changeColor(Color color) {
     setState(() => pickerColor = color);
     var points = _controller.points;
-    _controller =
-        SignatureController(penStrokeWidth: 5, penColor: color, points: points);
+    _controller = SignatureController(penStrokeWidth: 5, penColor: color, points: points);
   }
 
   Offset offset1 = Offset.zero;
@@ -124,9 +114,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 icon: Icon(Icons.check, color: Colors.white),
                 onPressed: () {
                   _imageFile = null;
-                  screenshotController
-                      .capture(pixelRatio: 6)
-                      .then((File image) async {
+                  screenshotController.capture(pixelRatio: 6).then((File image) async {
                     setState(() {
                       _imageFile = image;
                     });
@@ -163,10 +151,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             onPanUpdate: (DragUpdateDetails details) {
                               setState(() {
                                 RenderBox object = context.findRenderObject();
-                                Offset _localPosition = object
-                                    .globalToLocal(details.globalPosition);
-                                _points = new List.from(_points)
-                                  ..add(_localPosition);
+                                Offset _localPosition = object.globalToLocal(details.globalPosition);
+                                _points = new List.from(_points)..add(_localPosition);
                               });
                             },
                             onPanEnd: (DragEndDetails details) {
@@ -178,31 +164,21 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             )),
                       ),
                       Stack(
-                        children: stickerWidgets.values
-                            .toList()
-                            .asMap()
-                            .entries
-                            .map((f) {
+                        children: stickerWidgets.values.toList().asMap().entries.map((f) {
                           return f.value;
                         }).toList(),
                       ),
                       Stack(
-                        children: bubbleWidgets.values
-                            .toList()
-                            .asMap()
-                            .entries
-                            .map((f) {
+                        children: bubbleWidgets.values.toList().asMap().entries.map((f) {
                           return f.value;
                         }).toList(),
                       ),
                       Visibility(
                           visible: moving,
                           child: Container(
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                Icon(Icons.delete_outline, size: 40),
-                              ])))
+                              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                            Icon(Icons.delete_outline, size: 40),
+                          ])))
                     ],
                   )),
             ),
@@ -215,6 +191,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   animationDuration: Duration(milliseconds: 200),
                   backgroundColor: Colors.transparent,
                   items: <Widget>[
+                    Icon(Icons.filter, size: 30),
                     Icon(Icons.chat_bubble_outline, size: 30),
                     Icon(Icons.filter_frames, size: 30),
                     Icon(Icons.gesture, size: 30),
@@ -223,6 +200,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onTap: (index) {
                     switch (index) {
                       case 0:
+                        Future getStickers = showFiltersChooser();
+                          getStickers.then((value) {
+                            if (value != null) {
+                             
+                            }
+                        });
+
+                        print('filters');
+                        break;
+                      case 1:
                         Future getStickers = showChooserDialog('stickers');
                         getStickers.then((value) {
                           if (value != null) {
@@ -246,7 +233,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           }
                         });
                         break;
-                      case 1:
+                      case 2:
                         Future getBubbles = showChooserDialog('bubbles');
                         getBubbles.then((value) {
                           if (value != null) {
@@ -271,10 +258,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           }
                         });
                         break;
-                      case 2:
+                      case 3:
                         brush();
                         break;
-                      case 3:
+                      case 4:
                         _controller.clear();
                         type.clear();
                         break;
@@ -331,8 +318,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           alignment: Alignment.bottomCenter,
           child: Container(
             height: 250,
-            child: SizedBox.expand(
-                child: type == 'stickers' ? Stickers() : SpeechBubbles()),
+            child: SizedBox.expand(child: type == 'stickers' ? Stickers() : SpeechBubbles()
+            ),
             margin: EdgeInsets.only(bottom: 90, left: 12, right: 12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -343,14 +330,36 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
-          position:
-              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+          position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
           child: child,
         );
       },
     );
   }
-
+  showFiltersChooser() {
+    return showGeneralDialog(
+      barrierLabel: "Label",
+      barrierDismissible: true,
+      barrierColor: Colors.transparent,
+      transitionDuration: Duration(milliseconds: 200),
+      context: context,
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Filters(
+            image: _image,
+            onSelected:(filteredImage)=>_image=filteredImage
+          )
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+          child: child,
+        );
+      },
+    );
+  }
   void bottomsheets() {
     openbottomsheet = true;
     setState(() {});
@@ -358,9 +367,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       context: context,
       builder: (BuildContext context) {
         return new Container(
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
-          ]),
+          decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(blurRadius: 10.9, color: Colors.grey[400])]),
           height: 170,
           child: new Column(
             children: <Widget>[
@@ -386,11 +393,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               IconButton(
                                   icon: Icon(Icons.photo_library),
                                   onPressed: () async {
-                                    var image = await ImagePicker.pickImage(
-                                        source: ImageSource.gallery);
-                                    var decodedImage =
-                                        await decodeImageFromList(
-                                            image.readAsBytesSync());
+                                    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                                    var decodedImage = await decodeImageFromList(image.readAsBytesSync());
 
                                     setState(() {
                                       _image = image;
@@ -414,10 +418,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             IconButton(
                                 icon: Icon(Icons.camera_alt),
                                 onPressed: () async {
-                                  var image = await ImagePicker.pickImage(
-                                      source: ImageSource.camera);
-                                  var decodedImage = await decodeImageFromList(
-                                      image.readAsBytesSync());
+                                  var image = await ImagePicker.pickImage(source: ImageSource.camera);
+                                  var decodedImage = await decodeImageFromList(image.readAsBytesSync());
 
                                   setState(() {
                                     _image = image;
@@ -468,11 +470,7 @@ class _SignatState extends State<Signat> {
   Widget build(BuildContext context) {
     return ListView(
       children: <Widget>[
-        Signature(
-            controller: _controller,
-            height: widget.height,
-            width: widget.width,
-            backgroundColor: Colors.transparent),
+        Signature(controller: _controller, height: widget.height, width: widget.width, backgroundColor: Colors.transparent),
       ],
     );
   }
