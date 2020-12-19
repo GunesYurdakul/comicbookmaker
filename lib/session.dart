@@ -20,7 +20,7 @@ class Session extends ChangeNotifier {
   void _insert() async {
     // row to insert
     Map<String, dynamic> row = {};
-    final id = await dbHelper.insert(row);
+    final id = await dbHelper.insertBook(row);
     print('inserted row id: $id');
   }
 
@@ -33,16 +33,16 @@ class Session extends ChangeNotifier {
   void _update() async {
     // row to update
     Map<String, dynamic> row = {};
-    final rowsAffected = await dbHelper.update(row);
+    final rowsAffected = await dbHelper.updateBook(row);
     print('updated $rowsAffected row(s)');
   }
 
   void _delete() async {
     // Assuming that the number of rows is the id for the last row.
     final id = await dbHelper.queryRowCount();
-    final rowsDeleted = await dbHelper.delete(id);
+    final rowsDeleted = await dbHelper.deleteBook(id);
     print('deleted $rowsDeleted row(s): row $id');
-  }
+  } 
 
   Session._internal();
 }

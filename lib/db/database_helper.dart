@@ -43,13 +43,14 @@ class DatabaseHelper {
           CREATE TABLE $comicbooks (
             comicbookId INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
-            pages BLOB NOT NULL
+            pages BLOB NOT NULL,
+            coverPath TEXT,
           )''');
     await db.execute('''
           CREATE TABLE $pages (
             pageId INTEGER PRIMARY KEY,
             stickersList BLOB NOT NULL,
-            speechBubblesList BLOB NOT NULL
+            speechBubblesList BLOB NOT NULL,
           )''');
     await db.execute('''
           CREATE TABLE $images (
@@ -89,7 +90,7 @@ class DatabaseHelper {
   // Inserts a row in the database where each key in the Map is a column name
   // and the value is the column value. The return value is the id of the
   // inserted row.
-  Future<int> insert(Map<String, dynamic> row) async {
+  Future<int> insertBook(Map<String, dynamic> row) async {
     Database db = await instance.database;
     return await db.insert(comicbooks, row);
   }
@@ -110,7 +111,7 @@ class DatabaseHelper {
 
   // We are assuming here that the id column in the map is set. The other
   // column values will be used to update the row.
-  Future<int> update(Map<String, dynamic> row) async {
+  Future<int> updateBook(Map<String, dynamic> row) async {
     Database db = await instance.database;
     int id = row['comicbookId'];
     return await db.update(comicbooks, row, where: 'comicbookId = ?', whereArgs: [id]);
@@ -118,8 +119,9 @@ class DatabaseHelper {
 
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.
-  Future<int> delete(int id) async {
+  Future<int> deleteBook(int id) async {
     Database db = await instance.database;
     return await db.delete(comicbooks, where: 'comicbookId = ?', whereArgs: [id]);
   }
 }
+ 

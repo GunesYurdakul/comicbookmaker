@@ -12,6 +12,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+     
     return FutureBuilder<dynamic>(
         future: Session().initDatabase(), // a previously-obtained Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
