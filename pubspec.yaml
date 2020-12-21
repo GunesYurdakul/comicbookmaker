@@ -59,6 +59,7 @@ dependencies:
   ml_linalg: '12.17.3'
   binary:
   kmeans:
+  flutter_image_compress: ^0.7.0
 
 
 dev_dependencies:

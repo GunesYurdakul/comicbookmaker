@@ -66,6 +66,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   List type = [];
   List aligment = [];
   File _imageFile;
+  File filteredImage;
   bool moving = false;
   int movingIndex;
 
@@ -138,14 +139,21 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   key: globalKey,
                   child: Stack(
                     children: <Widget>[
-                      _image != null
+                      filteredImage != null
                           ? Image.file(
-                              _image,
+                              filteredImage,
                               height: widget.height,
                               width: widget.width,
                               fit: BoxFit.cover,
                             )
-                          : Container(),
+                          : (_image != null
+                              ? Image.file(
+                                  _image,
+                                  height: widget.height,
+                                  width: widget.width,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container()),
                       Container(
                         child: GestureDetector(
                             onPanUpdate: (DragUpdateDetails details) {
@@ -201,10 +209,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     switch (index) {
                       case 0:
                         Future getStickers = showFiltersChooser();
-                          getStickers.then((value) {
-                            if (value != null) {
-                             
-                            }
+                        getStickers.then((value) {
+                          if (value != null) {}
                         });
 
                         print('filters');
@@ -318,8 +324,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           alignment: Alignment.bottomCenter,
           child: Container(
             height: 250,
-            child: SizedBox.expand(child: type == 'stickers' ? Stickers() : SpeechBubbles()
-            ),
+            child: SizedBox.expand(child: type == 'stickers' ? Stickers() : SpeechBubbles()),
             margin: EdgeInsets.only(bottom: 90, left: 12, right: 12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -336,6 +341,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       },
     );
   }
+
   showFiltersChooser() {
     return showGeneralDialog(
       barrierLabel: "Label",
@@ -345,12 +351,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       context: context,
       pageBuilder: (context, anim1, anim2) {
         return Align(
-          alignment: Alignment.bottomCenter,
-          child: Filters(
-            image: _image,
-            onSelected:(filteredImage)=>_image=filteredImage
-          )
-        );
+            alignment: Alignment.bottomCenter,
+            child: Filters(
+                image: _image,
+                onSelected: (filteredImage) {
+                  setState(() {
+                    this.filteredImage = filteredImage;
+                  });
+                }));
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
@@ -360,6 +368,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       },
     );
   }
+
   void bottomsheets() {
     openbottomsheet = true;
     setState(() {});
@@ -398,6 +407,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
                                     setState(() {
                                       _image = image;
+                                      filteredImage = null;
                                     });
                                     setState(() => _controller.clear());
                                     Navigator.pop(context);
