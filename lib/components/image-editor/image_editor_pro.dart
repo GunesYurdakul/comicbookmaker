@@ -67,6 +67,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   List aligment = [];
   File _imageFile;
   File filteredImage;
+  String filter;
   bool moving = false;
   int movingIndex;
 
@@ -353,10 +354,12 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         return Align(
             alignment: Alignment.bottomCenter,
             child: Filters(
+                filter: this.filter,
                 image: _image,
-                onSelected: (filteredImage) {
+                onSelected: (filteredImage, filter) {
                   setState(() {
                     this.filteredImage = filteredImage;
+                    this.filter = filter;
                   });
                 }));
       },

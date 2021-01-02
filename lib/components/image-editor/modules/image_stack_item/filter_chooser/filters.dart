@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:projectX/comic-filters/comic_filters.dart';
 import 'package:projectX/comic-filters/lib/filter.dart';
@@ -10,25 +12,32 @@ import 'package:projectX/components/image-editor/modules/image_stack_item/filter
 
 class Filters extends StatefulWidget {
   final File image;
-  final Function(File image) onSelected;
-  const Filters({Key key, this.image, this.onSelected}) : super(key: key);
+  final String filter;
+  final Function(File image, String filter) onSelected;
+  const Filters({Key key, this.image, this.onSelected, this.filter}) : super(key: key);
   @override
   _FiltersState createState() => _FiltersState();
 }
 
 class _FiltersState extends State<Filters> {
-  List<String> filters = ['DetailEnhancement', 'PencilSketch', 'PencilEdges', 'Quantization', 'Quantization2'];//Biliteral
+  List<String> filters = ['None', 'DetailEnhancement', 'PencilSketch', 'PencilEdges', 'Quantization', 'Quantization2', 'PopArt1', 'PopArt2', 'PopArt3']; //, 'PopArt1', 'PopArt2', 'PopArt3', Biliteral
   File smallImage;
   File previewImage;
   File filteredImage;
-  Map<String, File> filterPrevImages = Map<String, File>();
+  String selected;
   String path;
+  @override
+  void initState() {
+    selected = widget.filter != null ?widget.filter:'None';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<File>(
         future: _getCompressedImage(),
         builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-          if (snapshot.hasData)
+          if (snapshot.hasData) {
             return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -38,45 +47,47 @@ class _FiltersState extends State<Filters> {
                 height: 100,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: filters.map((filter) {
-                    if (!filterPrevImages.containsKey(filter)) {
-                      var prev_filter = getComicFilter(filter, previewImage.path);
-                      prev_filter.apply();
-                      filterPrevImages[filter] = File('$path/$filter-prevfiltered.png')..writeAsBytesSync(encodePng(prev_filter.output));
-                    }
-                    return GestureDetector(
-                        onTap: () {
-                          if (filter == '') {
-                            widget.onSelected(widget.image);
-                          } else {
-                            print(filter);
-                            var de_filter = getComicFilter(filter, smallImage.path);
-                            de_filter.apply();
+                  children: List.generate(filters.length, (index) {
+                    String filter = filters[index];
+                    String filterPath = '$path/$filter-${basename(widget.image.path)}-filtered.png';
+                    return FilterView(
+                        onSelected: (val) async {
+                          if(val=='None')
+                            widget.onSelected(widget.image, val);
+                          setState(() {
+                            selected = val;
+                          });
+                          if(File(filterPath).existsSync())
+                            widget.onSelected(File(filterPath), val);
+                          else{
+                            var de_filter = getComicFilter(val, widget.image.path);
+                            await de_filter.apply();
                             print('image processed1');
-                            widget.onSelected(File('$path/$filter-filtered.png')..writeAsBytesSync(encodePng(de_filter.output)));
+                            widget.onSelected(File(filterPath)..writeAsBytesSync(encodePng(de_filter.output)), val);
                             print('image processed2');
                           }
                         },
-                        child: FilterView(compressedImage: filterPrevImages[filter], filterType: filter, path: '$path/$filter.png'));
-                  }).toList(),
+                        groupValue: selected,
+                        compressedImage: smallImage,
+                        filterType: filter,
+                        path: '$path/$filter-${basename(widget.image.path)}-smallfiltered.png');
+                  }),
                 ));
-          else
+          } else
             return Container();
         });
   }
 
   Future<File> _getCompressedImage() async {
-    if (widget.image != null) smallImage = await compressFile(widget.image, 80);
+    //lengthSync
+    if (widget.image != null) smallImage = await compressFile(widget.image, 70);
     if (widget.image != null) previewImage = await compressFile(widget.image, 0);
     final directory = await getApplicationDocumentsDirectory();
     path = directory.path;
+    print("returning small image");
     return smallImage;
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<File> compressFile(File file, int quality) async {
     final filePath = file.absolute.path;
