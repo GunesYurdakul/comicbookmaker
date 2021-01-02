@@ -85,11 +85,13 @@ flutter:
     - assets/popart2.png
     - assets/popart3.png
     - assets/comicsy_logo.png
-    - assets/stickers/comic-bright-speech-bubbles-set-with-colorful-wordings-clouds-halftone-humor-effects/singles/
-    - assets/stickers/speech-bubbles-hand-drawn-coloring/singles/
-    - assets/speechbubbles/collection-of-speech-bubbles-vector/singles/
-    - assets/speechbubbles/hand-drawn-sketch-speech-bubble-set-design/singles/
-    - assets/speechbubbles/hand-drawn-speech-bubble-collection/singles/
+    - assets/stickers/1/singles/
+    - assets/stickers/2/singles/
+    - assets/stickers/3/singles/
+    - assets/speechbubbles/1/singles/
+    - assets/speechbubbles/2/singles/
+    - assets/speechbubbles/3/singles/
+    - assets/speechbubbles/4/singles/
   fonts:
     - family: AdemWarren
       fonts:

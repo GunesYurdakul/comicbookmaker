@@ -19,6 +19,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     print('filter bloc map' + event.toString());
     if (event is ProcessFilter) {
       yield FilterProcessing();
+      await Future.delayed(const Duration(milliseconds: 200), (){});
       File filteredImage = await _getPreviewImage(event.path, event.compressedImage, event.filterType);
       yield FilterProcessed(filteredImage);
     }

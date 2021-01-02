@@ -122,9 +122,9 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
           },
           onScaleEnd: (endDetails) {
             print(offset);
-            if (offset.dy < 5 &&
-                offset.dx < (MediaQuery.of(context).size.width / 4) + 30 &&
-                offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
+            if (offset.dy < 15 &&
+                offset.dx < (MediaQuery.of(context).size.width / 4) + 50 &&
+                offset.dx > (MediaQuery.of(context).size.width / 4) - 50) {
               widget.onDelete();
             }
             print('stop moving **');

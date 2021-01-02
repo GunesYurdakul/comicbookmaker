@@ -14,13 +14,24 @@ class Filters extends StatefulWidget {
   final File image;
   final String filter;
   final Function(File image, String filter) onSelected;
-  const Filters({Key key, this.image, this.onSelected, this.filter}) : super(key: key);
+  final Function() loading;
+  const Filters({Key key, this.image, this.onSelected, this.filter, this.loading}) : super(key: key);
   @override
   _FiltersState createState() => _FiltersState();
 }
 
 class _FiltersState extends State<Filters> {
-  List<String> filters = ['None', 'DetailEnhancement', 'PencilSketch', 'PencilEdges', 'Quantization', 'Quantization2', 'PopArt1', 'PopArt2', 'PopArt3']; //, 'PopArt1', 'PopArt2', 'PopArt3', Biliteral
+  List<String> filters = [
+    'None',
+    'DetailEnhancement',
+    'PencilSketch',
+    'PencilEdges',
+    'Quantization',
+    'Quantization2',
+    'PopArt1',
+    'PopArt2',
+    'PopArt3'
+  ]; //, 'PopArt1', 'PopArt2', 'PopArt3', Biliteral
   File smallImage;
   File previewImage;
   File filteredImage;
@@ -28,8 +39,18 @@ class _FiltersState extends State<Filters> {
   String path;
   @override
   void initState() {
-    selected = widget.filter != null ?widget.filter:'None';
+    selected = widget.filter != null ? widget.filter : 'None';
+    print('init' + selected);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant Filters oldWidget) {
+    // TODO: implement didUpdateWidget
+    setState(() {
+      selected = widget.filter;
+    });
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -52,19 +73,23 @@ class _FiltersState extends State<Filters> {
                     String filterPath = '$path/$filter-${basename(widget.image.path)}-filtered.png';
                     return FilterView(
                         onSelected: (val) async {
-                          if(val=='None')
-                            widget.onSelected(widget.image, val);
                           setState(() {
+                            widget.loading();
                             selected = val;
                           });
-                          if(File(filterPath).existsSync())
-                            widget.onSelected(File(filterPath), val);
-                          else{
-                            var de_filter = getComicFilter(val, widget.image.path);
-                            await de_filter.apply();
-                            print('image processed1');
-                            widget.onSelected(File(filterPath)..writeAsBytesSync(encodePng(de_filter.output)), val);
-                            print('image processed2');
+                          await Future.delayed(const Duration(milliseconds: 200), () {});
+                          if (val == 'None')
+                            widget.onSelected(widget.image, val);
+                          else {
+                            if (File(filterPath).existsSync())
+                              widget.onSelected(File(filterPath), val);
+                            else {
+                              var de_filter = getComicFilter(val, widget.image.path);
+                              await de_filter.apply();
+                              print('image processed1');
+                              widget.onSelected(File(filterPath)..writeAsBytesSync(encodePng(de_filter.output)), val);
+                              print('image processed2');
+                            }
                           }
                         },
                         groupValue: selected,
@@ -87,7 +112,6 @@ class _FiltersState extends State<Filters> {
     print("returning small image");
     return smallImage;
   }
-
 
   Future<File> compressFile(File file, int quality) async {
     final filePath = file.absolute.path;

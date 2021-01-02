@@ -14,8 +14,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
 import 'modules/image_stack_item/filter_chooser/filters.dart';
-import 'modules/image_stack_item/speechbubble_chooser/speechbubbles.dart';
-import 'modules/image_stack_item/sticker_chooser/stickers.dart';
+import 'modules/image_stack_item/image_menu_bottom_sheet.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
@@ -68,6 +67,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   File _imageFile;
   File filteredImage;
   String filter;
+  bool loading = false;
   bool moving = false;
   int movingIndex;
 
@@ -186,8 +186,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           visible: moving,
                           child: Container(
                               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                            Icon(Icons.delete_outline, size: 40),
-                          ])))
+                            Icon(Icons.delete_outline, size: 40, color: Colors.white,),
+                          ]))),
+                      this.loading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                              backgroundColor: Colors.cyanAccent,
+                              valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+                            ))
+                          : Container()
                     ],
                   )),
             ),
@@ -241,7 +248,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         });
                         break;
                       case 2:
-                        Future getBubbles = showChooserDialog('bubbles');
+                        Future getBubbles = showChooserDialog('speechbubbles');
                         getBubbles.then((value) {
                           if (value != null) {
                             int key = bubbleWidgets.length;
@@ -324,8 +331,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         return Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            height: 250,
-            child: SizedBox.expand(child: type == 'stickers' ? Stickers() : SpeechBubbles()),
+            height: 300,
+            child: SizedBox.expand(child: ImageMenuBottomSheet(pathKey:type)),
             margin: EdgeInsets.only(bottom: 90, left: 12, right: 12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -356,10 +363,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             child: Filters(
                 filter: this.filter,
                 image: _image,
+                loading: () {
+                  this.setState(() {
+                    print('loading');
+                    this.loading = true;
+                  });
+                },
                 onSelected: (filteredImage, filter) {
                   setState(() {
                     this.filteredImage = filteredImage;
                     this.filter = filter;
+                    this.loading = false;
                   });
                 }));
       },
@@ -374,7 +388,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   void bottomsheets() {
     openbottomsheet = true;
-    setState(() {});
+    setState(() {
+      filter = 'None';
+    });
     Future<void> future = showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {

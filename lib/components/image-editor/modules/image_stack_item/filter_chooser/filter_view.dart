@@ -47,10 +47,13 @@ class _FilterViewState extends State<FilterView> {
         create: (_) => FilterBloc(),
         child: BlocBuilder<FilterBloc, FilterState>(buildWhen: (previousState, state) {
           if (state is FilterProcessed) {
-            compressedImage = state.filteredImage;
+            setState(() {
+              print('processed*');
+              compressedImage = state.filteredImage;
+            });
             print('filter ' + state.toString());
             return true;
-          }
+          } else if (state is FilterProcessing) return true;
           return false;
         }, builder: (context, state) {
           print('Filter:.' + state.toString() + (groupValue == widget.filterType).toString());
@@ -77,7 +80,7 @@ class _FilterViewState extends State<FilterView> {
                       borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                       border: new Border.all(
                         color: Colors.blue,
-                        width: groupValue == widget.filterType?3.0:0,
+                        width: groupValue == widget.filterType ? 3.0 : 0,
                       ),
                     ),
                   ),
