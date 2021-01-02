@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projectX/components/image-editor/modules/image_stack_item/animated_stack_item.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
 import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:screenshot/screenshot.dart';
@@ -140,21 +141,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   key: globalKey,
                   child: Stack(
                     children: <Widget>[
-                      filteredImage != null
-                          ? Image.file(
-                              filteredImage,
-                              height: widget.height,
-                              width: widget.width,
-                              fit: BoxFit.cover,
-                            )
-                          : (_image != null
-                              ? Image.file(
-                                  _image,
-                                  height: widget.height,
-                                  width: widget.width,
-                                  fit: BoxFit.cover,
-                                )
-                              : Container()),
                       Container(
                         child: GestureDetector(
                             onPanUpdate: (DragUpdateDetails details) {
@@ -173,6 +159,32 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             )),
                       ),
                       Stack(
+                        children: [
+                          filteredImage != null
+                          ? Image.file(
+                              filteredImage,
+                              height: widget.height,
+                              width: widget.width,
+                              fit: BoxFit.cover,
+                            )
+                          : (_image != null
+                              ? new AnimatedStackItem(
+                                  width: widget.width,
+                                  imagePath: _image.path,
+                                  onMoving: () {
+                                    toggleTrashBin(true);
+                                  },
+                                  onStopMoving: (state) {
+                                    print('stop');
+                                    toggleTrashBin(false);
+                                  },
+                                  onDelete: () {
+                                    _image = null;
+                                    print('delete');
+                                  },
+                                )
+                              : Container())]),
+                      Stack(
                         children: stickerWidgets.values.toList().asMap().entries.map((f) {
                           return f.value;
                         }).toList(),
@@ -186,7 +198,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           visible: moving,
                           child: Container(
                               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                            Icon(Icons.delete_outline, size: 40, color: Colors.white,),
+                            Icon(
+                              Icons.delete_outline,
+                              size: 40,
+                              color: Colors.white,
+                            ),
                           ]))),
                       this.loading
                           ? Center(
@@ -332,7 +348,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           alignment: Alignment.bottomCenter,
           child: Container(
             height: 300,
-            child: SizedBox.expand(child: ImageMenuBottomSheet(pathKey:type)),
+            child: SizedBox.expand(child: ImageMenuBottomSheet(pathKey: type)),
             margin: EdgeInsets.only(bottom: 90, left: 12, right: 12),
             decoration: BoxDecoration(
               color: Colors.white,

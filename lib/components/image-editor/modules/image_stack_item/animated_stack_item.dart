@@ -11,6 +11,7 @@ class AnimatedStackItem extends StatefulWidget {
   final double left;
   final double top;
   final double fontsize;
+  final double width;
   final String imagePath;
   final bool hasText;
   final VoidCallback onMoving;
@@ -19,17 +20,7 @@ class AnimatedStackItem extends StatefulWidget {
   final Function(Map<String, dynamic>) saveState;
   final AnimatedStackItemState state;
   AnimatedStackItem(
-      {Key key,
-      this.left,
-      this.top,
-      this.fontsize,
-      this.imagePath,
-      this.onMoving,
-      this.hasText,
-      this.onStopMoving,
-      this.onDelete,
-      this.state,
-      this.saveState})
+      {Key key, this.left, this.top, this.fontsize, this.imagePath, this.onMoving, this.hasText, this.onStopMoving, this.onDelete, this.state, this.saveState, this.width})
       : super(key: key);
   @override
   AnimatedStackItemState createState() => AnimatedStackItemState();
@@ -38,8 +29,7 @@ class AnimatedStackItem extends StatefulWidget {
 class AnimatedStackItemState extends State<AnimatedStackItem> {
   double _baseScaleFactor = 1;
   double scaleFactor = 1;
-  double width = 200;
-  double height = 200;
+  double width;
   double _fontSize = 15;
   Color _textColor = Colors.black;
   String text = 'Text';
@@ -53,13 +43,14 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
 
   @override
   void initState() {
+    if (widget.width != null) width = widget.width;
+    else width=200;
     super.initState();
     if (widget.state != null) {
       position = widget.state.position;
       lastPosition = widget.state.lastPosition;
       offset = widget.state.offset;
       width = widget.state.width;
-      height = widget.state.height;
       scaleFactor = widget.state.scaleFactor;
       rotation = widget.state.rotation;
     }
@@ -73,7 +64,6 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
       'lastPosition': lastPosition,
       'offset': offset,
       'width': width,
-      'height': height,
       'scaleFactor': scaleFactor,
       'rotation': rotation,
     });
@@ -94,7 +84,6 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
                     child: Image(
                   image: AssetImage(widget.imagePath),
                   width: width * scaleFactor,
-                  height: height * scaleFactor,
                 )),
                 getTextBox()
               ])),
@@ -113,18 +102,14 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
               lastPosition = details.localFocalPoint;
             });
             print('dx' + offset.dx.toString());
-            print('width'+(MediaQuery.of(context).size.width / 4).toString());
-            if (offset.dy < 5 &&
-                offset.dx < (MediaQuery.of(context).size.width / 4) + 30 &&
-                offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
+            print('width' + (MediaQuery.of(context).size.width / 4).toString());
+            if (offset.dy < 5 && offset.dx < (MediaQuery.of(context).size.width / 4) + 30 && offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
               scaleFactor /= 3;
             }
           },
           onScaleEnd: (endDetails) {
             print(offset);
-            if (offset.dy < 15 &&
-                offset.dx < (MediaQuery.of(context).size.width / 4) + 50 &&
-                offset.dx > (MediaQuery.of(context).size.width / 4) - 50) {
+            if (offset.dy < 15 && offset.dx < (MediaQuery.of(context).size.width / 4) + 50 && offset.dx > (MediaQuery.of(context).size.width / 4) - 50) {
               widget.onDelete();
             }
             print('stop moving **');
@@ -138,11 +123,6 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
   }
 
   Widget getTextBox() {
-    return widget.hasText != null
-        ? Container(
-            width: width * scaleFactor / 2,
-            height: height * scaleFactor / 3,
-            child: EditText(scaleFactor: scaleFactor))
-        : Container();
+    return widget.hasText != null ? Container(width: width * scaleFactor / 2, child: EditText(scaleFactor: scaleFactor)) : Container();
   }
 }

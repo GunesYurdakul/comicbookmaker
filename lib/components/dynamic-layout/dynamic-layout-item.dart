@@ -24,11 +24,10 @@ class _DynamicLayoutItemState extends State<DynamicLayoutItem> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Center(
-          child: ImageItem(
-        width: widget.width,
-        height: widget.height,
-      )),
+       ImageItem(
+            width: widget.width,
+            height: widget.height,
+      ),
     ]);
   }
 }

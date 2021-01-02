@@ -43,38 +43,41 @@ class _ImageItemState extends State<ImageItem> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () async {
+            var size = getImageSize();
+            _image = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new ImageEditorPro(
+                          appBarColor: Colors.transparent,
+                          bottomBarColor: Colors.blue,
+                          height: size['height'],
+                          width: size['width']-30,
+                          stickerWidgets: stickerWidgets,
+                          bubbleWidgets: bubbleWidgets,
+                          image: _backgroundImage,
+                          saveState: (stickers, bubbles, image) {
+                            widget.stickerWidgets = stickers;
+                            widget.bubbleWidgets = bubbles;
+                            _backgroundImage = image;
+                          },
+                        )));
+            setState(() {});
+          },
+      child: Container(
+        padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
         height: widget.height,
         width: widget.width,
         color: Colors.black,
-        child: InkWell(
             child: _image != null
                 ? FittedBox(
-                    child: Image.file(_image),
-                    fit: BoxFit.fitHeight,
+                    child: Image.file(_image,height: widget.height,),
+                    fit: BoxFit.none,
                   )
                 : Container(),
-            onTap: () async {
-              var size = getImageSize();
-              _image = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new ImageEditorPro(
-                            appBarColor: Colors.transparent,
-                            bottomBarColor: Colors.blue,
-                            height: size['height'],
-                            width: size['width'],
-                            stickerWidgets: stickerWidgets,
-                            bubbleWidgets: bubbleWidgets,
-                            image: _backgroundImage,
-                            saveState: (stickers, bubbles, image) {
-                              widget.stickerWidgets = stickers;
-                              widget.bubbleWidgets = bubbles;
-                              _backgroundImage = image;
-                            },
-                          )));
-              setState(() {});
-            }));
+            ));
   }
 
   getImageSize() {

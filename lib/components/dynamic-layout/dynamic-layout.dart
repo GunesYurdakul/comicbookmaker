@@ -65,10 +65,12 @@ class _DynamicLayoutState extends State<DynamicLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(children: [
+        body: Stack(
+          children: [
           isLayoutChosen
               ? getLayout()
               : Container(
+                  padding: EdgeInsets.zero,
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                   color: Colors.black,
@@ -160,7 +162,6 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                                     print('long press');
                                   },
                                   onHorizontalDragUpdate: (details) {
-                                    print('onHorizontalDragUpdate 2');
                                     if (numCols > 1) {
                                       var offset = details.delta;
                                       if (offset.dx > 0) {
@@ -171,7 +172,6 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                                     }
                                   },
                                   onVerticalDragUpdate: (details) {
-                                    print('onVerticalDragUpdate 2');
                                     if (numRows > 1) {
                                       var offset = details.delta;
                                       if (offset.dy > 0)
@@ -180,10 +180,11 @@ class _DynamicLayoutState extends State<DynamicLayout> {
                                     }
                                   },
                                   child: Container(
+                                    padding: EdgeInsets.zero,
                                     child: DynamicLayoutItem(
-                                        width: ((MediaQuery.of(context).size.width - 5 * (numCols * 2 + 1)) * (flexColValues[indexRow][indexCol] / sum(flexColValues[indexRow])))
+                                        width: ((MediaQuery.of(context).size.width - 3 * (numCols * 2 - 1)) * (flexColValues[indexRow][indexCol] / sum(flexColValues[indexRow])))
                                             .toDouble(),
-                                        height: (((MediaQuery.of(context).size.height - 5 * (numRows * 2 + 1)) * (flexRowValues[indexRow] / sum(flexRowValues)))).toDouble()),
+                                        height: (((MediaQuery.of(context).size.height - 3 * (numRows * 2 -1)) * (flexRowValues[indexRow] / sum(flexRowValues)))).toDouble()),
                                     margin: EdgeInsets.all(3),
                                     decoration: BoxDecoration(color: Colors.white),
                                   )))))))),

@@ -51,7 +51,6 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   widget.state.lastPosition=stateBeforeDispose['lastPosition'];
   widget.state.offset=stateBeforeDispose['offset'];
   widget.state.width=stateBeforeDispose['width'];
-  widget.state.height=stateBeforeDispose['height'];
   widget.state.scaleFactor=stateBeforeDispose['scaleFactor'];
   widget.state.rotation=stateBeforeDispose['rotation'];
 }
