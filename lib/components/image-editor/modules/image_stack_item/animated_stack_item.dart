@@ -43,18 +43,20 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
 
   @override
   void initState() {
-    if (widget.width != null) width = widget.width;
-    else width=200;
-    super.initState();
+
     if (widget.state != null) {
       position = widget.state.position;
       lastPosition = widget.state.lastPosition;
       offset = widget.state.offset;
-      width = widget.state.width;
       scaleFactor = widget.state.scaleFactor;
       rotation = widget.state.rotation;
     }
+    if (widget.width != null)
+      width = widget.width;
+    else
+      width = 200;
     _editingController = TextEditingController(text: text);
+    super.initState();
   }
 
   @override

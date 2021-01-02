@@ -117,7 +117,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 icon: Icon(Icons.check, color: Colors.white),
                 onPressed: () {
                   _imageFile = null;
-                  screenshotController.capture(pixelRatio: 6).then((File image) async {
+                  screenshotController.capture(pixelRatio: 2).then((File image) async {
                     setState(() {
                       _imageFile = image;
                     });
@@ -160,17 +160,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       ),
                       Stack(
                         children: [
-                          filteredImage != null
-                          ? Image.file(
-                              filteredImage,
-                              height: widget.height,
-                              width: widget.width,
-                              fit: BoxFit.cover,
-                            )
-                          : (_image != null
+                         (_image != null
                               ? new AnimatedStackItem(
                                   width: widget.width,
-                                  imagePath: _image.path,
+                                  imagePath: filteredImage != null?filteredImage.path:_image.path,
                                   onMoving: () {
                                     toggleTrashBin(true);
                                   },
