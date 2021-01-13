@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:projectX/session.dart';
 
 import 'dynamic-layout-item.dart';
@@ -66,37 +64,37 @@ class _DynamicLayoutState extends State<DynamicLayout> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
-          children: [
-          isLayoutChosen
-              ? getLayout()
-              : Container(
-                  padding: EdgeInsets.zero,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  color: Colors.black,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.grid_on,
-                        size: 34,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        layoutParameterSelector();
-                      })),
-          Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                  width: 30,
-                  height: 30,
-                  child: Center(
-                      child: Text(
-                    (widget.pageNumber + 1).toString(),
-                    style: TextStyle(color: Colors.black, fontFamily: 'AdemWarren', fontSize: 20),
-                  )),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3), shape: BoxShape.rectangle, color: Colors.white)))
-        ]));
-  }
+            children: [
+            isLayoutChosen
+                ? getLayout()
+                : Container(
+                    padding: EdgeInsets.zero,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.black,
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.grid_on,
+                          size: 34,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          layoutParameterSelector();
+                        })),
+            widget.pageNumber !=null?Positioned(
+                right: 0,
+                bottom: 0,
+                child: Container(
+                    width: 30,
+                    height: 30,
+                    child: Center(
+                        child: Text(
+                      (widget.pageNumber + 1).toString(),
+                      style: TextStyle(color: Colors.black, fontFamily: 'AdemWarren', fontSize: 20),
+                    )),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3), shape: BoxShape.rectangle, color: Colors.white))):Container()
+          ])
+    );}
 
   layoutParameterSelector() {
     showDialog(

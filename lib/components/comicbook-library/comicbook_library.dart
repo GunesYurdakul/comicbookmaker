@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projectX/components/comicbook/comicbook.dart';
+import 'package:projectX/components/post/post.dart';
 import 'package:projectX/session.dart';
 
 class ComicBookLibrary extends StatefulWidget {
@@ -8,10 +9,10 @@ class ComicBookLibrary extends StatefulWidget {
 }
 
 class _ComicBookLibraryState extends State<ComicBookLibrary> {
-  List<ComicBook> _comicBooks;
+  List<Post> _comicBooks;
   @override
   void initState() {
-    _comicBooks = List<ComicBook>();
+    _comicBooks = List<Post>();
     // TODO: implement initState
     super.initState();
   }
@@ -28,7 +29,7 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
         child: Icon(Icons.add),
         backgroundColor: Color(0xff0060AA),
         onPressed: () {
-          _comicBooks.add(ComicBook());
+          _comicBooks.add(Post());
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => _comicBooks.last));
         },

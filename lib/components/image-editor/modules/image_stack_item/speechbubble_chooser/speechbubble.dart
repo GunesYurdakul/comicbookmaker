@@ -55,3 +55,6 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
   widget.state.rotation=stateBeforeDispose['rotation'];
 }
 }
+
+
+

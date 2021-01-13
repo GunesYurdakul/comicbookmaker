@@ -8,7 +8,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projectX/components/image-editor/modules/image_stack_item/animated_stack_item.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
 import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:screenshot/screenshot.dart';
@@ -16,6 +15,7 @@ import 'package:signature/signature.dart';
 
 import 'modules/image_stack_item/filter_chooser/filters.dart';
 import 'modules/image_stack_item/image_menu_bottom_sheet.dart';
+import 'modules/image_stack_item/sticker_chooser/sticker_image.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
@@ -47,6 +47,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   // create some values
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
+  Map<int, Widget> images;
+  Map<int, Widget> filteredImages;
   Map<int, Widget> stickerWidgets;
   Map<int, Widget> bubbleWidgets;
   File _image;
@@ -161,9 +163,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       Stack(
                         children: [
                          (_image != null
-                              ? new AnimatedStackItem(
+                              ? new StickerImage(
                                   width: widget.width,
-                                  imagePath: filteredImage != null?filteredImage.path:_image.path,
+                                  imageFile: filteredImage != null?filteredImage:_image,
                                   onMoving: () {
                                     toggleTrashBin(true);
                                   },
@@ -194,7 +196,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             Icon(
                               Icons.delete_outline,
                               size: 40,
-                              color: Colors.white,
+                              color: Colors.grey,
                             ),
                           ]))),
                       this.loading
@@ -239,7 +241,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             int key = stickerWidgets.length;
 
                             stickerWidgets[key] = new StickerView(
-                              value: value,
+                              path: value,
                               onMoving: () {
                                 toggleTrashBin(true);
                                 movingIndex = key;

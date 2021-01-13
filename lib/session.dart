@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'db/database_helper.dart';
 
 class Session extends ChangeNotifier {
-  final dbHelper = DatabaseHelper.instance;
+  //final dbHelper = DatabaseHelper.instance;
   static Session _instance = Session._internal();
   bool showLayoutSelector = false;
   bool showLayoutFlexSelector = false;
@@ -14,7 +14,10 @@ class Session extends ChangeNotifier {
   notify() {
     notifyListeners();
   }
-  initDatabase()async{
+   initDatabase()async{
+    
+  }
+/*   initDatabase()async{
     await _instance.dbHelper.database;
   }
   void _insert() async {
@@ -43,6 +46,6 @@ class Session extends ChangeNotifier {
     final rowsDeleted = await dbHelper.deleteBook(id);
     print('deleted $rowsDeleted row(s): row $id');
   } 
-
+ */
   Session._internal();
 }

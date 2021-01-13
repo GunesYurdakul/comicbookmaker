@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:projectX/comic-filters/comic_filters.dart';
 import 'package:projectX/comic-filters/lib/filter.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/filter_chooser/filter_view.dart';
 
@@ -24,13 +22,15 @@ class _FiltersState extends State<Filters> {
   List<String> filters = [
     'None',
     'DetailEnhancement',
+    'Bilateral',
     'PencilSketch',
     'PencilEdges',
     'Quantization',
+    'Quantization1',
     'Quantization2',
     'PopArt1',
     'PopArt2',
-    'PopArt3'
+    'PopArt3',
   ]; //, 'PopArt1', 'PopArt2', 'PopArt3', Biliteral
   File smallImage;
   File previewImage;
@@ -77,23 +77,21 @@ class _FiltersState extends State<Filters> {
                             widget.loading();
                             selected = val;
                           });
-                          await Future.delayed(const Duration(milliseconds: 200), () {});
+                          await Future.delayed(const Duration(milliseconds: 50), () {});
                           if (val == 'None')
                             widget.onSelected(widget.image, val);
                           else {
                             if (File(filterPath).existsSync())
                               widget.onSelected(File(filterPath), val);
                             else {
-                              var de_filter = getComicFilter(val, widget.image.path);
-                              await de_filter.apply();
-                              print('image processed1');
-                              widget.onSelected(File(filterPath)..writeAsBytesSync(encodePng(de_filter.output)), val);
+                              File outputImage =  await _getFilteredImage(filterPath, smallImage, filter);
+                              widget.onSelected(outputImage, val);
                               print('image processed2');
                             }
                           }
                         },
                         groupValue: selected,
-                        compressedImage: smallImage,
+                        compressedImage: previewImage,
                         filterType: filter,
                         path: '$path/$filter-${basename(widget.image.path)}-smallfiltered.png');
                   }),
@@ -105,28 +103,41 @@ class _FiltersState extends State<Filters> {
 
   Future<File> _getCompressedImage() async {
     //lengthSync
-    if (widget.image != null) smallImage = await compressFile(widget.image, 70);
-    if (widget.image != null) previewImage = await compressFile(widget.image, 0);
+    if (widget.image != null) smallImage = await compressFile(widget.image, 60, 1000);
+    if (widget.image != null) previewImage = await compressFile(widget.image, 0, 200);
     final directory = await getApplicationDocumentsDirectory();
     path = directory.path;
     print("returning small image");
+    print('small' + smallImage.lengthSync().toString());
+    print('preview' + previewImage.lengthSync().toString());
     return smallImage;
   }
 
-  Future<File> compressFile(File file, int quality) async {
+  Future<File> compressFile(File file, int quality, int width) async {
     final filePath = file.absolute.path;
     // Create output file path
-    // eg:- "Volume/VM/abcd_out.jpeg"
     final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
     final splitted = filePath.substring(0, (lastIndex));
-    final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
-    var result = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      outPath,
-      quality: quality,
-    );
-    print(file.lengthSync());
-    print(result.lengthSync());
+    final outPath = "${splitted}${quality}_out${filePath.substring(lastIndex)}";
+
+    File imageFile = await FlutterImageCompress.compressAndGetFile(file.absolute.path, outPath, minWidth: width, minHeight: width, quality: quality);
+    File result = new File(imageFile.path);
+
     return result;
+  }
+
+  Future<File> _getFilteredImage(String path, File compressedImage, String filterType) async {
+    print('filter BLOc');
+    bool exists = await File(path).exists();
+    if (exists) {
+      compressedImage = File(path);
+    } else {
+      try {
+        Filter prevFilter = getComicFilter(filterType, compressedImage.path);
+        await prevFilter.apply();
+        compressedImage = File(path)..writeAsBytesSync(encodePng(prevFilter.output));
+      } catch (e) {}
+    }
+    return compressedImage;
   }
 }

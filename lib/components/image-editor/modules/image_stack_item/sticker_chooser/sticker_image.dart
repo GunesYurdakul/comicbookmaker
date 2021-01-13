@@ -1,30 +1,30 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import 'edit_text.dart';
 
-class AnimatedStackItem extends StatefulWidget {
+class StickerImage extends StatefulWidget {
   final double left;
   final double top;
   final double fontsize;
   final double width;
-  final String imagePath;
+  final File imageFile;
   final bool hasText;
   final VoidCallback onMoving;
-  final Function(AnimatedStackItemState) onStopMoving;
+  final Function(StickerImageState) onStopMoving;
   final VoidCallback onDelete;
   final Function(Map<String, dynamic>) saveState;
-  final AnimatedStackItemState state;
-  AnimatedStackItem(
-      {Key key, this.left, this.top, this.fontsize, this.imagePath, this.onMoving, this.hasText, this.onStopMoving, this.onDelete, this.state, this.saveState, this.width})
+  final StickerImageState state;
+  StickerImage(
+      {Key key, this.left, this.top, this.fontsize, this.imageFile, this.onMoving, this.hasText, this.onStopMoving, this.onDelete, this.state, this.saveState, this.width})
       : super(key: key);
   @override
-  AnimatedStackItemState createState() => AnimatedStackItemState();
+  StickerImageState createState() => StickerImageState();
 }
 
-class AnimatedStackItemState extends State<AnimatedStackItem> {
+class StickerImageState extends State<StickerImage> {
   double _baseScaleFactor = 1;
   double scaleFactor = 1;
   double width;
@@ -81,11 +81,9 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
               angle: (pi / 180) * rotation,
               child: Stack(alignment: Alignment.center, children: <Widget>[
                 Container(
-                    child: Image(
-                  image: AssetImage(widget.imagePath),
+                    child:Image.file(widget.imageFile),
                   width: width * scaleFactor,
-                )),
-                getTextBox()
+                ),
               ])),
           onScaleStart: (details) {
             _baseScaleFactor = scaleFactor;
@@ -118,11 +116,4 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         ));
   }
 
-  getTextInput() {
-    print('getting text');
-  }
-
-  Widget getTextBox() {
-    return widget.hasText != null ? Container(width: width * scaleFactor / 2, child: EditText(scaleFactor: scaleFactor)) : Container();
-  }
 }

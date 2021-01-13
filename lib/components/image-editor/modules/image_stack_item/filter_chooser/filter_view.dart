@@ -2,9 +2,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image/image.dart';
-import 'package:path/path.dart';
-import 'package:projectX/comic-filters/lib/filter.dart';
 
 import 'bloc/filter_bloc.dart';
 
