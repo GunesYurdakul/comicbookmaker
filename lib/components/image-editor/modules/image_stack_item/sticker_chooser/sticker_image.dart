@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-
 class StickerImage extends StatefulWidget {
   final double left;
   final double top;
@@ -13,12 +12,25 @@ class StickerImage extends StatefulWidget {
   final File imageFile;
   final bool hasText;
   final VoidCallback onMoving;
+  final VoidCallback onTap;
   final Function(StickerImageState) onStopMoving;
   final VoidCallback onDelete;
   final Function(Map<String, dynamic>) saveState;
   final StickerImageState state;
   StickerImage(
-      {Key key, this.left, this.top, this.fontsize, this.imageFile, this.onMoving, this.hasText, this.onStopMoving, this.onDelete, this.state, this.saveState, this.width})
+      {Key key,
+      this.left,
+      this.top,
+      this.fontsize,
+      this.imageFile,
+      this.onMoving,
+      this.hasText,
+      this.onStopMoving,
+      this.onDelete,
+      this.state,
+      this.saveState,
+      this.width,
+      this.onTap})
       : super(key: key);
   @override
   StickerImageState createState() => StickerImageState();
@@ -41,7 +53,6 @@ class StickerImageState extends State<StickerImage> {
 
   @override
   void initState() {
-
     if (widget.state != null) {
       position = widget.state.position;
       lastPosition = widget.state.lastPosition;
@@ -81,10 +92,13 @@ class StickerImageState extends State<StickerImage> {
               angle: (pi / 180) * rotation,
               child: Stack(alignment: Alignment.center, children: <Widget>[
                 Container(
-                    child:Image.file(widget.imageFile),
+                  child: Image.file(widget.imageFile),
                   width: width * scaleFactor,
                 ),
               ])),
+          onTap: () {
+            widget?.onTap();
+          },
           onScaleStart: (details) {
             _baseScaleFactor = scaleFactor;
             lastPosition = details.localFocalPoint;
@@ -115,5 +129,4 @@ class StickerImageState extends State<StickerImage> {
           },
         ));
   }
-
 }

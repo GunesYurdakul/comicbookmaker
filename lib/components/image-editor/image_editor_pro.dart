@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projectX/components/image-editor/modules/basic_image_editor.dart';
 import 'package:projectX/components/image-editor/modules/image_stack_item/speechbubble_chooser/speechbubble.dart';
 import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:screenshot/screenshot.dart';
@@ -177,6 +179,13 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     _image = null;
                                     print('delete');
                                   },
+                                  onTap: () async {
+                                     ByteData editedImage = await Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(
+                                        builder: (context) => BasicImageEditor(image: _image,))
+                                      );
+                                  },
                                 )
                               : Container())]),
                       Stack(
@@ -227,11 +236,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onTap: (index) {
                     switch (index) {
                       case 0:
-                        Future getStickers = showFiltersChooser();
-                        getStickers.then((value) {
-                          if (value != null) {}
-                        });
-
+                        showFiltersChooser();
                         print('filters');
                         break;
                       case 1:
@@ -434,7 +439,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   onPressed: () async {
                                     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
                                     var decodedImage = await decodeImageFromList(image.readAsBytesSync());
-
+                                    ByteData editedImage = await Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(
+                                        builder: (context) => BasicImageEditor(image: image,))
+                                      );
                                     setState(() {
                                       _image = image;
                                       filteredImage = null;
