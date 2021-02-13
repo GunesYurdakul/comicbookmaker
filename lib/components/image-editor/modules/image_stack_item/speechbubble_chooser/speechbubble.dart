@@ -42,7 +42,8 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(alignment: Alignment.center, children: <Widget>[
+    return Stack(
+      alignment: Alignment.center, children: <Widget>[
       Container(
           child: AnimatedStackItem(
               state: widget.state,
@@ -53,6 +54,7 @@ class _SpeechBubbleViewState extends State<SpeechBubbleView> {
               onStopMoving: (state) => {widget.onStopMoving(state)},
               onDelete: () => {widget.onDelete()},
               saveState: (stateBeforeDispose) => saveWidgetState(stateBeforeDispose))),
+              
     ]);
   }
 

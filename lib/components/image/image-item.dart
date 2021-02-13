@@ -64,7 +64,7 @@ class _ImageItemState extends State<ImageItem> with SingleTickerProviderStateMix
         margin: EdgeInsets.zero,
         height: widget.height,
         width: widget.width,
-        color: Colors.black,
+        color: Colors.white,
             child: _image != null
                 ? FittedBox(
                     child: Image.file(_image,height: widget.height,),

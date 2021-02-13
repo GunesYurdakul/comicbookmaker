@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         home: MyHomePage(),
         theme: ThemeData(
-          appBarTheme: AppBarTheme(color: Color(0xffE20025)),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Color(0xff0060AA)),
-          fontFamily: 'AdemWarren',
-          primarySwatch: Colors.blue,
+          appBarTheme: AppBarTheme(color: Colors.blue[100]),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.pink[100]),
+          primarySwatch: Colors.pink,
+          iconTheme: IconThemeData(color: Colors.grey[600]),
           visualDensity: VisualDensity.adaptivePlatformDensity,
     ));
   }

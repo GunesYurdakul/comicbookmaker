@@ -102,7 +102,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.grey[100],
         key: scaf,
         appBar: new AppBar(
           actions: <Widget>[

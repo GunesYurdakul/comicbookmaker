@@ -90,7 +90,6 @@ class _ComicBookState extends State<ComicBook>
             fabOpenIcon: Icon(Icons.more_vert, color: Colors.white),
             alignment: Alignment.bottomLeft,
             ringDiameter: 350,
-            ringColor: Color(0x55aabbcc),
             key: fabKey,
             children: <Widget>[
               FloatingActionButton(
@@ -179,7 +178,6 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
         if (pages.length <= currentPageIndex + 1) {
           currentPageIndex += 1;
           pages.add(new DynamicLayout(
-            isLayoutChosen: false,
             pageNumber: currentPageIndex,
           ));
           currentPageIndex = widget.currentPageIndex;
@@ -194,7 +192,6 @@ class _ComicBookNavigationState extends State<ComicBookNavigation>
   void initState() {
     isLayoutChosen.add(false);
     DynamicLayout page = new DynamicLayout(
-      isLayoutChosen: false,
       pageNumber: 0,
     );
 

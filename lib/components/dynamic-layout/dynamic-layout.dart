@@ -6,9 +6,9 @@ import 'dynamic-layout-item.dart';
 
 class DynamicLayout extends StatefulWidget {
   final int pageNumber;
-  final bool isLayoutChosen;
+  final isGrid;
 
-  DynamicLayout({Key key, this.pageNumber, this.isLayoutChosen = false}) : super(key: key);
+  DynamicLayout({Key key, this.pageNumber, this.isGrid = false}) : super(key: key);
   @override
   _DynamicLayoutState createState() => _DynamicLayoutState();
 }
@@ -30,9 +30,8 @@ class _DynamicLayoutState extends State<DynamicLayout> {
         }
       });
     });
-    isLayoutChosen = widget.isLayoutChosen;
     setLayoutValues(1, 1);
-    print('INIT LAYOUT');
+    if (!widget.isGrid) isLayoutChosen = true;
     // TODO: implement initState
     super.initState();
   }
@@ -63,38 +62,38 @@ class _DynamicLayoutState extends State<DynamicLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(
-            children: [
-            isLayoutChosen
-                ? getLayout()
-                : Container(
-                    padding: EdgeInsets.zero,
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.black,
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.grid_on,
-                          size: 34,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          layoutParameterSelector();
-                        })),
-            widget.pageNumber !=null?Positioned(
-                right: 0,
-                bottom: 0,
-                child: Container(
-                    width: 30,
-                    height: 30,
-                    child: Center(
-                        child: Text(
-                      (widget.pageNumber + 1).toString(),
-                      style: TextStyle(color: Colors.black, fontFamily: 'AdemWarren', fontSize: 20),
-                    )),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3), shape: BoxShape.rectangle, color: Colors.white))):Container()
-          ])
-    );}
+        body: Stack(children: [
+          isLayoutChosen
+              ? getLayout()
+              : Container(
+                  padding: EdgeInsets.zero,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.grid_on,
+                        size: 34,
+                        color: Colors.pink[100],
+                      ),
+                      onPressed: () {
+                        layoutParameterSelector();
+                      })),
+          widget.pageNumber != null
+              ? Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                      width: 30,
+                      height: 30,
+                      child: Center(
+                          child: Text(
+                        (widget.pageNumber + 1).toString(),
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      )),
+                      decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3), shape: BoxShape.rectangle, color: Colors.black)))
+              : Container()
+        ]));
+  }
 
   layoutParameterSelector() {
     showDialog(
@@ -141,51 +140,56 @@ class _DynamicLayoutState extends State<DynamicLayout> {
 
   Widget getLayout() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black, width: 3)),
+      decoration: BoxDecoration(color: Colors.black, border: Border.all(color: Colors.black, width: 3)),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: List.generate(
               numRows,
               (indexRow) => Expanded(
                   flex: flexRowValues[indexRow],
-                  child: flexRowValues[indexRow]==0?Container():Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: List.generate(
-                          numCols,
-                          (indexCol) => Expanded(
-                              flex: flexColValues[indexRow][indexCol],
-                              child: flexColValues[indexRow][indexCol]==0?Container():
-                              GestureDetector(
-                                  onLongPress: () {
-                                    print('long press');
-                                  },
-                                  onHorizontalDragUpdate: (details) {
-                                    if (numCols > 1) {
-                                      var offset = details.delta;
-                                      if (offset.dx > 0) {
-                                        expandHorizontal(indexRow, indexCol);
-                                      } else if (offset.dx < 0 && flexColValues[indexRow][indexCol] > 0) {
-                                        shrinkHorizontal(indexRow, indexCol);
-                                      }
-                                    }
-                                  },
-                                  onVerticalDragUpdate: (details) {
-                                    if (numRows > 1) {
-                                      var offset = details.delta;
-                                      if (offset.dy > 0)
-                                        expandVertical(indexRow);
-                                      else if (offset.dy < 0 && flexRowValues[indexRow] > 0) shrinkVertical(indexRow);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.zero,
-                                    child: DynamicLayoutItem(
-                                        width: ((MediaQuery.of(context).size.width - 3 * (numCols * 2 - 1)) * (flexColValues[indexRow][indexCol] / sum(flexColValues[indexRow])))
-                                            .toDouble(),
-                                        height: (((MediaQuery.of(context).size.height - 3 * (numRows * 2 -1)) * (flexRowValues[indexRow] / sum(flexRowValues)))).toDouble()),
-                                    margin: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(color: Colors.white),
-                                  )))))))),
+                  child: flexRowValues[indexRow] == 0
+                      ? Container()
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: List.generate(
+                              numCols,
+                              (indexCol) => Expanded(
+                                  flex: flexColValues[indexRow][indexCol],
+                                  child: flexColValues[indexRow][indexCol] == 0
+                                      ? Container()
+                                      : GestureDetector(
+                                          onLongPress: () {
+                                            print('long press');
+                                          },
+                                          onHorizontalDragUpdate: (details) {
+                                            if (numCols > 1) {
+                                              var offset = details.delta;
+                                              if (offset.dx > 0) {
+                                                expandHorizontal(indexRow, indexCol);
+                                              } else if (offset.dx < 0 && flexColValues[indexRow][indexCol] > 0) {
+                                                shrinkHorizontal(indexRow, indexCol);
+                                              }
+                                            }
+                                          },
+                                          onVerticalDragUpdate: (details) {
+                                            if (numRows > 1) {
+                                              var offset = details.delta;
+                                              if (offset.dy > 0)
+                                                expandVertical(indexRow);
+                                              else if (offset.dy < 0 && flexRowValues[indexRow] > 0) shrinkVertical(indexRow);
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.zero,
+                                            child: DynamicLayoutItem(
+                                                width: ((MediaQuery.of(context).size.width - 3 * (numCols * 2 - 1)) *
+                                                        (flexColValues[indexRow][indexCol] / sum(flexColValues[indexRow])))
+                                                    .toDouble(),
+                                                height:
+                                                    (((MediaQuery.of(context).size.height - 3 * (numRows * 2 - 1)) * (flexRowValues[indexRow] / sum(flexRowValues)))).toDouble()),
+                                            margin: EdgeInsets.all(3),
+                                            decoration: BoxDecoration(color: Colors.black),
+                                          )))))))),
     );
   }
 

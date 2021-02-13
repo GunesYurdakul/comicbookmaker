@@ -104,7 +104,9 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
     return Positioned(
         left: position.dx,
         top: position.dy,
-        child: Stack(alignment: Alignment.center, children: <Widget>[
+        child: Stack(
+          alignment: Alignment.center, 
+          children: <Widget>[
           GestureDetector(
               child: Transform.rotate(
                   angle: (pi / 180) * rotation,
@@ -138,13 +140,12 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
                 if (offset.dy < 15 && offset.dx < (MediaQuery.of(context).size.width / 4) + 30 && offset.dx > (MediaQuery.of(context).size.width / 4) - 30) {
                   widget.onDelete();
                 }
-                print('stop moving **');
                 widget.onStopMoving(widget.state);
                 setState(() {
-                  //moving = false;
                 });
               },
               onTap: () {}),
+          getTextBox(),
           widget.showButtons ? Positioned(right: 0, top: 0, child: getLayerSettings()) : Container(),
           widget.showButtons
               ? Positioned(
@@ -162,12 +163,12 @@ class AnimatedStackItemState extends State<AnimatedStackItem> {
         ]));
   }
 
-  getTextInput() {
-    print('getting text');
-  }
-
   Widget getTextBox() {
-    return widget.hasText != null ? Container(width: width * scaleFactor / 2, child: EditText(scaleFactor: scaleFactor)) : Container();
+    return widget.hasText != null ? 
+      Container(
+        width: width * scaleFactor / 2, 
+        child: EditText(scaleFactor: scaleFactor)
+      ) : Container();
   }
 
   Widget getLayerSettings() {

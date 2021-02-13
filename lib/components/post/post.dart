@@ -46,7 +46,6 @@ class _PostState extends State<Post> {
       body: Screenshot(
         controller: screenshotController,
         child: DynamicLayout(
-          isLayoutChosen: false,
           pageNumber: null,
       )));
   }
