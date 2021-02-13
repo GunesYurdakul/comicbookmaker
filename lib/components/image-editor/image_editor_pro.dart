@@ -15,7 +15,6 @@ import './modules/image_stack_item/sticker_chooser/sticker.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
-import 'modules/image_stack_item/filter_chooser/filters.dart';
 import 'modules/image_stack_item/image_menu_bottom_sheet.dart';
 import 'modules/image_stack_item/sticker_chooser/sticker_image.dart';
 
@@ -34,11 +33,10 @@ class ImageEditorPro extends StatefulWidget {
   final double width;
   final double height;
   final Color bottomBarColor;
-  final Map<int, Widget> stickerWidgets;
-  final Map<int, Widget> bubbleWidgets;
+  final Map<int, Widget> stackWidgets;
   final File image;
-  final void Function(Map<int, Widget> stickers, Map<int, Widget> bubbles, File _image) saveState;
-  ImageEditorPro({this.width, this.height, this.appBarColor, this.bottomBarColor, this.saveState, this.stickerWidgets, this.bubbleWidgets, this.image});
+  final void Function(Map<int, Widget> stickers, File _image) saveState;
+  ImageEditorPro({this.width, this.height, this.appBarColor, this.bottomBarColor, this.saveState, this.stackWidgets, this.image});
   @override
   _ImageEditorProState createState() => _ImageEditorProState();
 }
@@ -49,10 +47,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   // create some values
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
-  Map<int, Widget> images;
-  Map<int, Widget> filteredImages;
-  Map<int, Widget> stickerWidgets;
-  Map<int, Widget> bubbleWidgets;
+  Map<int, Widget> stackWidgets;
   File _image;
 
 // ValueChanged<Color> callback
@@ -99,8 +94,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   void initState() {
     print('init state');
     super.initState();
-    bubbleWidgets = widget.bubbleWidgets;
-    stickerWidgets = widget.stickerWidgets;
+    stackWidgets = widget.stackWidgets;
     _image = widget.image;
     timers();
   }
@@ -125,7 +119,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     setState(() {
                       _imageFile = image;
                     });
-                    widget.saveState(stickerWidgets, bubbleWidgets, _image);
+                    widget.saveState(stackWidgets, _image);
                     Navigator.pop(context, image);
                   }).catchError((onError) {
                     print(onError);
@@ -162,39 +156,40 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               height: widget.height,
                             )),
                       ),
-                      Stack(
-                        children: [
-                         (_image != null
-                              ? new StickerImage(
-                                  width: widget.width,
-                                  imageFile: filteredImage != null?filteredImage:_image,
-                                  onMoving: () {
-                                    toggleTrashBin(true);
-                                  },
-                                  onStopMoving: (state) {
-                                    print('stop');
-                                    toggleTrashBin(false);
-                                  },
-                                  onDelete: () {
-                                    _image = null;
-                                    print('delete');
-                                  },
-                                  onTap: () async {
-                                     ByteData editedImage = await Navigator.push(
-                                      context, 
+                      Stack(children: [
+                        (_image != null
+                            ? new StickerImage(
+                                width: widget.width,
+                                imageFile: filteredImage != null ? filteredImage : _image,
+                                onMoving: () {
+                                  toggleTrashBin(true);
+                                },
+                                onStopMoving: (state) {
+                                  print('stop');
+                                  toggleTrashBin(false);
+                                },
+                                onDelete: () {
+                                  _image = null;
+                                  print('delete');
+                                },
+                                onTap: () async {
+                                  File data = await Navigator.push(
+                                      context,
                                       MaterialPageRoute(
-                                        builder: (context) => BasicImageEditor(image: _image,))
-                                      );
-                                  },
-                                )
-                              : Container())]),
+                                          builder: (context) => BasicImageEditor(
+                                                image: _image,
+                                              )));
+                                  if (data != null) {
+                                    setState(() {
+                                      _image = data;
+                                    });
+                                  }
+                                },
+                              )
+                            : Container())
+                      ]),
                       Stack(
-                        children: stickerWidgets.values.toList().asMap().entries.map((f) {
-                          return f.value;
-                        }).toList(),
-                      ),
-                      Stack(
-                        children: bubbleWidgets.values.toList().asMap().entries.map((f) {
+                        children: stackWidgets.values.toList().asMap().entries.map((f) {
                           return f.value;
                         }).toList(),
                       ),
@@ -227,7 +222,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   animationDuration: Duration(milliseconds: 200),
                   backgroundColor: Colors.transparent,
                   items: <Widget>[
-                    Icon(Icons.filter, size: 30),
                     Icon(Icons.chat_bubble_outline, size: 30),
                     Icon(Icons.filter_frames, size: 30),
                     Icon(Icons.gesture, size: 30),
@@ -236,62 +230,54 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onTap: (index) {
                     switch (index) {
                       case 0:
-                        showFiltersChooser();
-                        print('filters');
-                        break;
-                      case 1:
                         Future getStickers = showChooserDialog('stickers');
                         getStickers.then((value) {
                           if (value != null) {
-                            int key = stickerWidgets.length;
-
-                            stickerWidgets[key] = new StickerView(
+                            int key = stackWidgets.length;
+                            stackWidgets[key] = new StickerView(
                               path: value,
+                              showButtons: movingIndex == key,
                               onMoving: () {
                                 toggleTrashBin(true);
                                 movingIndex = key;
                               },
                               onStopMoving: (state) {
-                                print('stop');
                                 toggleTrashBin(false);
                               },
                               onDelete: () {
-                                stickerWidgets.remove(movingIndex);
-                                print('delete');
+                                stackWidgets.remove(movingIndex);
+                              },
+                            );
+                          }
+                        });
+                        break;
+                      case 1:
+                        Future getBubbles = showChooserDialog('speechbubbles');
+                        getBubbles.then((value) {
+                          if (value != null) {
+                            int key = stackWidgets.length;
+                            stackWidgets[key] = new SpeechBubbleView(
+                              value: value,
+                              showButtons: movingIndex == key,
+                              onMoving: () {
+                                toggleTrashBin(true);
+                                movingIndex = key;
+                              },
+                              onStopMoving: (state) {
+                                moving = true;
+                                toggleTrashBin(false);
+                              },
+                              onDelete: () {
+                                stackWidgets.remove(movingIndex);
                               },
                             );
                           }
                         });
                         break;
                       case 2:
-                        Future getBubbles = showChooserDialog('speechbubbles');
-                        getBubbles.then((value) {
-                          if (value != null) {
-                            int key = bubbleWidgets.length;
-                            bubbleWidgets[key] = new SpeechBubbleView(
-                              value: value,
-                              onMoving: () {
-                                toggleTrashBin(true);
-                                movingIndex = key;
-                                print('moving widget' + moving.toString());
-                              },
-                              onStopMoving: (state) {
-                                print('stop');
-                                moving = true;
-                                toggleTrashBin(false);
-                              },
-                              onDelete: () {
-                                bubbleWidgets.remove(movingIndex);
-                                print('delete');
-                              },
-                            );
-                          }
-                        });
-                        break;
-                      case 3:
                         brush();
                         break;
-                      case 4:
+                      case 3:
                         _controller.clear();
                         type.clear();
                         break;
@@ -366,42 +352,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     );
   }
 
-  showFiltersChooser() {
-    return showGeneralDialog(
-      barrierLabel: "Label",
-      barrierDismissible: true,
-      barrierColor: Colors.transparent,
-      transitionDuration: Duration(milliseconds: 200),
-      context: context,
-      pageBuilder: (context, anim1, anim2) {
-        return Align(
-            alignment: Alignment.bottomCenter,
-            child: Filters(
-                filter: this.filter,
-                image: _image,
-                loading: () {
-                  this.setState(() {
-                    print('loading');
-                    this.loading = true;
-                  });
-                },
-                onSelected: (filteredImage, filter) {
-                  setState(() {
-                    this.filteredImage = filteredImage;
-                    this.filter = filter;
-                    this.loading = false;
-                  });
-                }));
-      },
-      transitionBuilder: (context, anim1, anim2, child) {
-        return SlideTransition(
-          position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
-          child: child,
-        );
-      },
-    );
-  }
-
   void bottomsheets() {
     openbottomsheet = true;
     setState(() {
@@ -438,16 +388,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   icon: Icon(Icons.photo_library),
                                   onPressed: () async {
                                     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                                    var decodedImage = await decodeImageFromList(image.readAsBytesSync());
-                                    ByteData editedImage = await Navigator.push(
-                                      context, 
-                                      MaterialPageRoute(
-                                        builder: (context) => BasicImageEditor(image: image,))
-                                      );
-                                    setState(() {
-                                      _image = image;
-                                      filteredImage = null;
-                                    });
+                                    File data = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => BasicImageEditor(
+                                                  image: image,
+                                                )));
+                                    if (data != null) {
+                                      setState(() {
+                                        _image = image;
+                                      });
+                                    }
+                                   
                                     setState(() => _controller.clear());
                                     Navigator.pop(context);
                                   }),

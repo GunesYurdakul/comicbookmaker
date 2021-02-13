@@ -9,8 +9,7 @@ class ImageItem extends StatefulWidget {
   final double width;
   final double height;
   ImageItem({Key key, this.title, this.width, this.height}) : super(key: key);
-  Map<int, Widget> stickerWidgets = new Map<int, Widget>();
-  Map<int, Widget> bubbleWidgets = new Map<int, Widget>();
+  Map<int, Widget> stackWidgets = new Map<int, Widget>();
 
   final String title;
   @override
@@ -20,24 +19,21 @@ class ImageItem extends StatefulWidget {
 class _ImageItemState extends State<ImageItem> with SingleTickerProviderStateMixin {
   File _image; //image to load
   File _backgroundImage; //image to load
-  Map<int, Widget> stickerWidgets;
-  Map<int, Widget> bubbleWidgets;
+  Map<int, Widget> stackWidgets;
 
   //List<Sticker> stickers;
   //List<SpeechBubble> speech bubbles;
   @override
   void initState() {
     print('init state***-***');
-    stickerWidgets = widget.stickerWidgets;
-    bubbleWidgets = widget.bubbleWidgets;
+    stackWidgets = widget.stackWidgets;
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant ImageItem oldWidget) {
     // TODO: implement didUpdateWidget
-    stickerWidgets = widget.stickerWidgets;
-    bubbleWidgets = widget.bubbleWidgets;
+    stackWidgets = widget.stackWidgets;
     super.didUpdateWidget(oldWidget);
   }
 
@@ -54,12 +50,10 @@ class _ImageItemState extends State<ImageItem> with SingleTickerProviderStateMix
                           bottomBarColor: Colors.blue,
                           height: size['height'],
                           width: size['width']-30,
-                          stickerWidgets: stickerWidgets,
-                          bubbleWidgets: bubbleWidgets,
+                          stackWidgets: stackWidgets,
                           image: _backgroundImage,
-                          saveState: (stickers, bubbles, image) {
-                            widget.stickerWidgets = stickers;
-                            widget.bubbleWidgets = bubbles;
+                          saveState: (stickers, image) {
+                            widget.stackWidgets = stickers;
                             _backgroundImage = image;
                           },
                         )));

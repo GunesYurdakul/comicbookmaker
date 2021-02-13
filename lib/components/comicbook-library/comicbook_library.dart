@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projectX/components/comicbook/comicbook.dart';
 import 'package:projectX/components/post/post.dart';
-import 'package:projectX/session.dart';
 
 class ComicBookLibrary extends StatefulWidget {
   @override

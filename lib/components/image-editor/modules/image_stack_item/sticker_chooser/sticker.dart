@@ -10,9 +10,10 @@ class StickerView extends StatefulWidget {
   final VoidCallback onMoving;
   final Function(AnimatedStackItemState) onStopMoving;
   final VoidCallback onDelete;
+  final bool showButtons;
   final AnimatedStackItemState state = AnimatedStackItemState();
 
-  StickerView({Key key, this.path, this.onMoving, this.onStopMoving, this.onDelete, this.width}) : super(key: key);
+  StickerView({Key key, this.path, this.onMoving, this.onStopMoving, this.onDelete, this.width, this.showButtons}) : super(key: key);
   @override
   _StickerViewState createState() => _StickerViewState();
 }
@@ -34,6 +35,7 @@ class _StickerViewState extends State<StickerView> {
         state: widget.state,
         imagePath: widget.path,
         width: widget.width,
+        showButtons: widget.showButtons,
         onMoving: () => {widget.onMoving()},
         onStopMoving: (state) => {widget.onStopMoving(state)},
         onDelete: () => {widget.onDelete()},

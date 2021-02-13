@@ -19,27 +19,24 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     print('filter bloc map' + event.toString());
     if (event is ProcessFilter) {
       yield FilterProcessing();
-      await Future.delayed(const Duration(milliseconds: 200), (){});
-      File filteredImage = await _getPreviewImage(event.path, event.compressedImage, event.filterType);
+      await Future.delayed(const Duration(milliseconds: 200), () {});
+      File filteredImage = await _getPreviewImage(event.path, event.compressedImage, event.filterType, event.colorFilter);
       yield FilterProcessed(filteredImage);
     }
     // TODO: implement mapEventToState
   }
 
-  Future<File> _getPreviewImage(String path, File compressedImage, String filterType) async {
-    print('filter BLOc');
+  Future<File> _getPreviewImage(String path, File compressedImage, String filterType, [List<num> colorFilter]) async {
     bool exists = await File(path).exists();
     if (exists) {
       compressedImage = File(path);
-    }
-    else{
-      try{
-        Filter prevFilter = getComicFilter(filterType, compressedImage.path);
+    } else {
+      try {
+        if (colorFilter != null) filterType = 'BasicFilter';
+        ComicFilter prevFilter = getComicFilter(filterType, compressedImage.path, colorFilter);
         await prevFilter.apply();
         compressedImage = File(path)..writeAsBytesSync(encodePng(prevFilter.output));
-      }catch(e){
-
-      }
+      } catch (e) {}
     }
     return compressedImage;
   }

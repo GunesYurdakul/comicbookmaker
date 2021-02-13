@@ -9,9 +9,11 @@ class FilterView extends StatefulWidget {
   final File compressedImage;
   final String path;
   final String groupValue;
+  final int index;
   final Function(String filter) onSelected;
+  final List<num> colorFilter;
   final String filterType;
-  const FilterView({Key key, this.onSelected, this.filterType, this.compressedImage, this.path, this.groupValue}) : super(key: key);
+  const FilterView({Key key, this.onSelected, this.filterType, this.compressedImage, this.path, this.groupValue, this.colorFilter, this.index}) : super(key: key);
   @override
   _FilterViewState createState() => _FilterViewState();
 }
@@ -57,7 +59,7 @@ class _FilterViewState extends State<FilterView> {
           print(groupValue + widget.filterType);
           if (state is FilterInitial) {
             FilterBloc bloc = BlocProvider.of(context);
-            bloc.add(ProcessFilter(path: path, compressedImage: compressedImage, filterType: widget.filterType));
+            bloc.add(ProcessFilter(path: path, compressedImage: compressedImage, filterType: widget.filterType, colorFilter: widget.colorFilter));
           } else if (state is FilterProcessed) {
             compressedImage = state.filteredImage;
           }

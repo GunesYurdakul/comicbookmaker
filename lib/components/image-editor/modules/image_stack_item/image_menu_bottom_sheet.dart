@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImageMenuBottomSheet extends StatefulWidget {
@@ -11,6 +13,7 @@ class ImageMenuBottomSheet extends StatefulWidget {
 
 class _ImageMenuBottomSheetState extends State<ImageMenuBottomSheet> with SingleTickerProviderStateMixin {
   String pathKey;
+  List<String> folders;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +78,9 @@ class _ImageMenuBottomSheetState extends State<ImageMenuBottomSheet> with Single
     Map<String, List<String>> imagesInFolders = Map<String, List<String>>();
     String manifestContent = await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     var manifestMap = json.decode(manifestContent);
-    for (var i = 1; i <= 4; i++) {
-      imagesInFolders[i.toString()] = manifestMap.keys.where((String key) => (key.contains('$pathKey/$i') && !key.contains('DS_Store'))).toList();
-      print(imagesInFolders[i.toString()].length);
+    for (String folder in folders) {
+      imagesInFolders[folder] = manifestMap.keys.where((String key) => (key.contains('$pathKey/$folder') && !key.contains('DS_Store'))).toList();
+      print(imagesInFolders[folder].length);
     }
     return imagesInFolders;
   }
@@ -85,7 +88,18 @@ class _ImageMenuBottomSheetState extends State<ImageMenuBottomSheet> with Single
   @override
   void initState() {
     pathKey = widget.pathKey;
+    folders = pathKey == 'stickers' ? ['backgrounds','patterns','characters', 'furnitures'] : ['1'];
     super.initState();
     this._listofFiles();
+  }
+
+  Future<List<FileSystemEntity>> dirContents(Directory dir) {
+    var files = <FileSystemEntity>[];
+    var completer = Completer<List<FileSystemEntity>>();
+    var lister = dir.list(recursive: false);
+    lister.listen((file) => files.add(file),
+        // should also register onError
+        onDone: () => completer.complete(files));
+    return completer.future;
   }
 }

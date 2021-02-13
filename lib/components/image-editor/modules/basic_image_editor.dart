@@ -1,10 +1,18 @@
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:flutter/services.dart';
+import 'package:image/image.dart';
+import 'package:image_editor/image_editor.dart';
+import 'dart:ui';
+// ignore: implementation_imports
 import 'image_stack_item/filter_chooser/filters.dart';
+
+import 'dart:async';
 
 class BasicImageEditor extends StatefulWidget {
   final File image;
@@ -18,8 +26,10 @@ class _BasicImageEditorState extends State<BasicImageEditor> {
   final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey<ExtendedImageEditorState>();
   bool _cropping = false;
   String filter;
+  ColorFilter colorFilter;
   double _cropAspectRatio;
   File _filteredImage;
+
   @override
   void initState() {
     _filteredImage = widget.image;
@@ -35,9 +45,12 @@ class _BasicImageEditorState extends State<BasicImageEditor> {
           actions: [
             IconButton(
                 icon: Icon(Icons.check),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  //editorKey.currentState.image.
+                onPressed: () async {
+                  editorKey.currentState.editAction;
+                  var _img = editorKey.currentState.image;
+                  Uint8List cropped = await cropImageDataWithNativeLibrary(state: editorKey.currentState);
+//                  Image img = Image.fromBytes(_img.width,_img.height,cropped);
+                  Navigator.of(context).pop(File(widget.image.path)..writeAsBytesSync(cropped));
                 })
           ],
         ),
@@ -98,6 +111,8 @@ class _BasicImageEditorState extends State<BasicImageEditor> {
         body: ExtendedImage.file(
           _filteredImage,
           fit: BoxFit.contain,
+//          colorBlendMode: BlendMode.hue,
+//          color: Colors.black,
           mode: ExtendedImageMode.editor,
           extendedImageEditorKey: editorKey,
           initEditorConfigHandler: (state) {
@@ -214,20 +229,26 @@ class _BasicImageEditorState extends State<BasicImageEditor> {
       pageBuilder: (context, anim1, anim2) {
         return Align(
             alignment: Alignment.bottomCenter,
-            child: Filters(
-                filter: this.filter,
-                image: widget.image,
-                loading: () {
-                  this.setState(() {
-                    print('loading');
-                  });
-                },
-                onSelected: (filteredImage, filter) {
-                  setState(() {
-                    this._filteredImage = filteredImage;
-                    this.filter = filter;
-                  });
-                }));
+            child: Material(
+                color: Colors.transparent,
+                child: Filters(
+                  filter: this.filter,
+                  image: widget.image,
+                  loading: () {
+                    this.setState(() {
+                      print('loading');
+                    });
+                  },
+                  onSelected: (filteredImage, filter) {
+                    setState(() {
+                      this._filteredImage = filteredImage;
+                      this.filter = filter;
+                    });
+                  },
+                  onColorFilterSelected: (colorFilter) {
+                    colorFilter = colorFilter;
+                  },
+                )));
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
@@ -236,5 +257,48 @@ class _BasicImageEditorState extends State<BasicImageEditor> {
         );
       },
     );
+  }
+
+  Future<Uint8List> _cropImage() async {
+    String msg = '';
+    _cropping = true;
+    Uint8List fileData;
+    fileData = Uint8List.fromList(await cropImageDataWithNativeLibrary(state: editorKey.currentState));
+    return fileData;
+  }
+
+  Future<List<int>> cropImageDataWithNativeLibrary({ExtendedImageEditorState state}) async {
+    print('native library start cropping');
+
+    final Rect cropRect = state.getCropRect();
+    final EditActionDetails action = state.editAction;
+
+    final int rotateAngle = action.rotateAngle.toInt();
+    final bool flipHorizontal = action.flipY;
+    final bool flipVertical = action.flipX;
+    final Uint8List img = state.rawImageData;
+
+    final ImageEditorOption option = ImageEditorOption();
+
+    if (action.needCrop) {
+      option.addOption(ClipOption.fromRect(cropRect));
+    }
+
+    if (action.needFlip) {
+      option.addOption(FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+    }
+
+    if (action.hasRotateAngle) {
+      option.addOption(RotateOption(rotateAngle));
+    }
+
+    final DateTime start = DateTime.now();
+    final Uint8List result = await ImageEditor.editImage(
+      image: img,
+      imageEditorOption: option,
+    );
+
+    print('${DateTime.now().difference(start)} ：total time');
+    return result;
   }
 }
