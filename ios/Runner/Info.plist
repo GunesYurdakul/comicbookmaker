@@ -4,6 +4,8 @@
 <dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to demonstrate image picker plugin</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Used to demonstrate image picker plugin</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to demonstrate image picker plugin</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -49,6 +51,7 @@
 	<false/>
 	<key>UIStatusBarHidden</key>
 	<true/>
-
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-7789092779128108~5831770780</string>
 </dict>
 </plist>

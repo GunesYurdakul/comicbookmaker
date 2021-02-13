@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "714716699356",
+    "project_id": "comicsy-4ca7b",
+    "storage_bucket": "comicsy-4ca7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714716699356:android:aef080590e53a1f6b77219",
+        "android_client_info": {
+          "package_name": "com.example.projectX"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714716699356-uvsdcvt1jn11rkjmcmq4v10iov6j3j29.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLVrofgE_191rH_OPMeVGzNk4ZyGnbX7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714716699356-uvsdcvt1jn11rkjmcmq4v10iov6j3j29.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "714716699356-mmobib3992lie12vmnj3abm2m4i8nef5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.projectX"
+              }
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-7789092779128108~6438931982"
+    }
+  ],
+  "configuration_version": "1"
+}

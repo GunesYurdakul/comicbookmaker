@@ -1,5 +1,9 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:projectX/admob.dart';
 import 'package:projectX/components/post/post.dart';
+
+const String testDevice = 'YOUR_DEVICE_ID';
 
 class ComicBookLibrary extends StatefulWidget {
   @override
@@ -8,15 +12,28 @@ class ComicBookLibrary extends StatefulWidget {
 
 class _ComicBookLibraryState extends State<ComicBookLibrary> {
   List<Post> _comicBooks;
+  BannerAd _bannerAd;
+
   @override
   void initState() {
+    _bannerAd = createBannerAd()..load();
     _comicBooks = List<Post>();
     // TODO: implement initState
     super.initState();
   }
-
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _bannerAd = null;
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
+    _bannerAd ??= createBannerAd();
+      _bannerAd
+        ..load()
+        ..show(horizontalCenterOffset: -50,);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -28,15 +45,18 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {
+        onPressed: () async {
+          await _bannerAd?.dispose();
+          _bannerAd = null;
+
+          RewardedVideoAd.instance.load(adUnitId: RewardedVideoAd.testAdUnitId, targetingInfo: targetingInfo).catchError((e) => print('Error in loading.2'));
           _comicBooks.add(Post());
           Navigator.push(context, MaterialPageRoute(builder: (context) => _comicBooks.last));
         },
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
+          padding: EdgeInsets.all(20),
+          child: Column(children: [
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -61,37 +81,24 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
                 ],
               ),
             ),
-      ])),
+          ])),
     );
   }
 
   Widget getPostOption(title) {
     return Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5)
-      ),
-      child: InkWell(
-        onTap: () {
-          _comicBooks.add(Post());
-          Navigator.push(context, MaterialPageRoute(builder: (context) => _comicBooks.last));
-        },
-        child: Center(
-          child: Text(title))
-      )
-    );
+        height: 100,
+        width: 100,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+        child: InkWell(
+            onTap: () {
+              _comicBooks.add(Post());
+              Navigator.push(context, MaterialPageRoute(builder: (context) => _comicBooks.last));
+            },
+            child: Center(child: Text(title))));
   }
+
   Widget getThemaGroup(title) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5)
-      ),
-      child: Center(
-        child: Text(title)
-      )
-    );
+    return Container(height: 100, width: 100, decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)), child: Center(child: Text(title)));
   }
 }
