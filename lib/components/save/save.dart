@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share/share.dart';
 
 class Save extends StatefulWidget {
   final File file;
@@ -21,7 +22,7 @@ class _SaveState extends State<Save> {
       body: Column(children: [
         Container(
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 15),
-            height: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.height / 2,
             alignment: Alignment.center,
             child: widget.file != null
                 ? FittedBox(
@@ -35,13 +36,15 @@ class _SaveState extends State<Save> {
           height: 20,
         ),
         Container(
-            margin: EdgeInsets.all(30),
+            width: 250,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ListTile(
-                  leading: Icon(Icons.image),
-                  title: Text('Gallery'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.save),
+                  title: Text('Save to Gallery'),
                   onTap: () async {
                     final result = await ImageGallerySaver.saveImage(widget.file.readAsBytesSync());
                     print(result);
@@ -57,16 +60,12 @@ class _SaveState extends State<Save> {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.image),
-                  title: Text('Instagram'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.image),
-                  title: Text('Facebook'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.image),
-                  title: Text('Messenger'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.share),
+                  title: Text('Share'),
+                  onTap: (){
+                    Share.shareFiles([widget.file.path], text: 'Great picture');
+                  },
                 ),
               ],
             ))
