@@ -48,7 +48,7 @@ class _ComicBookLibraryState extends State<ComicBookLibrary> {
             ),
             Divider(),
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+              scrollDirection: Axis.vertical,
               child: Column(
                 children: [
                   getThemaGroup('Love'),

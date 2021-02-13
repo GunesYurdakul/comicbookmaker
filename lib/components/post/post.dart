@@ -26,22 +26,20 @@ class _PostState extends State<Post> {
           title: Text('New Post'),
           actions: [
             IconButton(
-                icon: Icon(Icons.save),
-                onPressed: () {
-                  File _imageFile = null;
-                  screenshotController.capture(pixelRatio: 2).then((File image) async {
-                    setState(() {
-                      _imageFile = image;
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Save(file:image)));
-                    });
-                  //  widget.saveState(stickerWidgets, bubbleWidgets, _image);
-                   // Navigator.pop(context, image);
-                  }).catchError((onError) {
-                    print(onError);
+              icon: Icon(Icons.save),
+              onPressed: () {
+                File _imageFile;
+                screenshotController.capture(pixelRatio: 2).then((File image) async {
+                  setState(() {
+                    _imageFile = image;
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Save(file:image)));
                   });
-                }),
-          ],
+                }).catchError((onError) {
+                  print(onError);
+                });
+              }),
+        ],
         ),
       body: Screenshot(
         controller: screenshotController,

@@ -60,39 +60,24 @@ class _DynamicLayoutState extends State<DynamicLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(children: [
-          isLayoutChosen
-              ? getLayout()
-              : Container(
-                  padding: EdgeInsets.zero,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.grid_on,
-                        size: 34,
-                        color: Colors.pink[100],
-                      ),
-                      onPressed: () {
-                        layoutParameterSelector();
-                      })),
-          widget.pageNumber != null
-              ? Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                      width: 30,
-                      height: 30,
-                      child: Center(
-                          child: Text(
-                        (widget.pageNumber + 1).toString(),
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      )),
-                      decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3), shape: BoxShape.rectangle, color: Colors.black)))
-              : Container()
-        ]));
+    return Stack(
+      children: [
+        isLayoutChosen
+          ? getLayout()
+          : Container(
+              padding: EdgeInsets.zero,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.grid_on,
+                    size: 34,
+                    color: Colors.pink[100],
+                  ),
+                  onPressed: () {
+                    layoutParameterSelector();
+                  })),
+        ]);
   }
 
   layoutParameterSelector() {
@@ -140,7 +125,7 @@ class _DynamicLayoutState extends State<DynamicLayout> {
 
   Widget getLayout() {
     return Container(
-      decoration: BoxDecoration(color: Colors.black, border: Border.all(color: Colors.black, width: 3)),
+      padding: EdgeInsets.zero,
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: List.generate(
